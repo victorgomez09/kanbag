@@ -1,5 +1,6 @@
-package com.generalsoftware.kangab.util;
+package com.generalsoftware.kangab.validator;
 
+import com.generalsoftware.kangab.annotation.PasswordMatcher;
 import com.generalsoftware.kangab.dto.SignUpDto;
 
 import jakarta.validation.ConstraintValidator;

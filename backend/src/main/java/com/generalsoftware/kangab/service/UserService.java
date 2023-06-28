@@ -8,4 +8,5 @@ public interface UserService {
     User findUserByEmail(String email);
 
     User registerNewUser(SignUpDto signUpRequest) throws UserAlreadyExistAuthenticationException;
+
 }

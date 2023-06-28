@@ -40,7 +40,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 return e.getObjectName() + " : " + e.getDefaultMessage();
             }
         }).collect(Collectors.joining(", "));
-        return handleExceptionInternal(ex, new ApiResponseDto(false, error), new HttpHeaders(), HttpStatus.BAD_REQUEST,
+        return handleExceptionInternal(ex, new ApiResponseDto<>(false, error, null), new HttpHeaders(),
+                HttpStatus.BAD_REQUEST,
                 request);
     }
 }

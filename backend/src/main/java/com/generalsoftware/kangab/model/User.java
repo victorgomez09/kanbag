@@ -35,7 +35,7 @@ public class User extends BaseModel {
     @Column(name = "DISPLAY_NAME")
     private String displayName;
 
-    @Column(name = "enabled", columnDefinition = "BIT", length = 1)
+    @Column(name = "enabled")
     private boolean enabled;
 
     @Column(name = "USING_2FA")

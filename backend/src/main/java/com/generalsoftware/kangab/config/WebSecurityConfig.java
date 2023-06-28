@@ -1,16 +1,14 @@
 package com.generalsoftware.kangab.config;
 
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,11 +23,14 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.util.HashMap;
-import java.util.Map;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 
 @Configuration
 @EnableWebSecurity
@@ -48,21 +49,22 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/signup").permitAll()
+                        .requestMatchers(PUBLIC_PATHS).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer((oauth2) -> oauth2
-                        .jwt(Customizer.withDefaults()))
+                        .jwt(jwt -> jwt.decoder(jwtDecoder())))
+                .httpBasic(httpBasic -> httpBasic.disable())
                 .exceptionHandling((exceptions) -> exceptions
                         .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
-        // .authorizeHttpRequests()
-        // .requestMatchers(PUBLIC_PATHS).permitAll()
+                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
+                .headers(headers -> headers
+                        .xssProtection(xss -> xss
+                                .headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
+                        .contentSecurityPolicy(
+                                cps -> cps.policyDirectives("script-src 'self'")));
+
         // .anyRequest().hasAuthority("SCOPE_ROLE_ADMIN").and()
-        // .and()
-        // .csrf().disable()
-        // .httpBasic().disable()
         // .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
         // .sessionManagement((session) ->
         // session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

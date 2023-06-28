@@ -1,6 +1,6 @@
 package com.generalsoftware.kangab.dto;
 
-import com.generalsoftware.kangab.util.PasswordMatcher;
+import com.generalsoftware.kangab.annotation.PasswordMatcher;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

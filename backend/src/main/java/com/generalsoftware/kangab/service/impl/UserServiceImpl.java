@@ -34,6 +34,7 @@ public class UserServiceImpl implements UserService {
         User user = buildUser(signUpRequest);
         user = userRepository.save(user);
         userRepository.flush();
+
         return user;
     }
 

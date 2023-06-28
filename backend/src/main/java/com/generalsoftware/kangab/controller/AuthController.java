@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.generalsoftware.kangab.dto.ApiResponseDto;
-import com.generalsoftware.kangab.dto.JwtApiResponseDto;
 import com.generalsoftware.kangab.dto.SignInDto;
 import com.generalsoftware.kangab.dto.SignUpDto;
 import com.generalsoftware.kangab.exception.UserAlreadyExistAuthenticationException;
@@ -42,13 +41,13 @@ public class AuthController {
     final AuthenticationManager authenticationManager;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInDto loginRequest) {
+    public ResponseEntity<ApiResponseDto<String>> authenticateUser(@Valid @RequestBody SignInDto loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         LocalUser localUser = (LocalUser) authentication.getPrincipal();
         String jwt = getToken(localUser);
-        return ResponseEntity.ok(new JwtApiResponseDto(jwt));
+        return ResponseEntity.ok(new ApiResponseDto<>(true, "User signed", jwt));
     }
 
     private String getToken(LocalUser localUser) {
@@ -69,14 +68,15 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpDto signUpRequest) {
+    public ResponseEntity<ApiResponseDto<Void>> registerUser(@Valid @RequestBody SignUpDto signUpRequest) {
         try {
             userService.registerNewUser(signUpRequest);
         } catch (UserAlreadyExistAuthenticationException e) {
             log.error("Exception Occurred", e);
-            return new ResponseEntity<>(new ApiResponseDto(false, "Email Address already in use!"),
+            return new ResponseEntity<>(new ApiResponseDto<>(false, "Email Address already in use!", null),
                     HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.ok().body(new ApiResponseDto(true, "User registered successfully"));
+
+        return ResponseEntity.ok().body(new ApiResponseDto<>(true, "User registered successfully", null));
     }
 }

@@ -1,4 +1,4 @@
-package com.generalsoftware.kangab.util;
+package com.generalsoftware.kangab.annotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -6,6 +6,8 @@ import jakarta.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import com.generalsoftware.kangab.validator.PasswordMatcherValidator;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.TYPE;
