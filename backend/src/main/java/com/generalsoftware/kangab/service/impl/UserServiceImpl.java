@@ -6,10 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.generalsoftware.kangab.dto.SignUpDto;
-import com.generalsoftware.kangab.dto.UserUpdateDto;
 import com.generalsoftware.kangab.exception.ResourceNotFoundException;
-import com.generalsoftware.kangab.exception.UserAlreadyExistAuthenticationException;
+import com.generalsoftware.kangab.exception.ResourceAlreadyExistException;
 import com.generalsoftware.kangab.model.User;
 import com.generalsoftware.kangab.repository.UserRepository;
 import com.generalsoftware.kangab.service.UserService;
@@ -25,31 +23,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(value = "transactionManager")
-    public User registerNewUser(final SignUpDto signUpRequest) throws UserAlreadyExistAuthenticationException {
-        if (userRepository.existsByEmailIgnoreCase(signUpRequest.getEmail())) {
-            throw new UserAlreadyExistAuthenticationException(
-                    "User with email id " + signUpRequest.getEmail() + " already exist");
+    public User registerNewUser(User user) throws ResourceAlreadyExistException {
+        if (userRepository.existsByEmailIgnoreCase(user.getEmail())) {
+            throw new ResourceAlreadyExistException("User", "email", user.getEmail());
         }
-        User user = buildUser(signUpRequest);
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user = userRepository.save(user);
         userRepository.flush();
 
         return user;
     }
 
-    private User buildUser(final SignUpDto signUpRequest) {
-        User user = new User();
-        user.setDisplayName(signUpRequest.getDisplayName());
-        user.setEmail(signUpRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        user.setEnabled(true);
-        return user;
-    }
-
     @Override
     public List<User> findAllUsers() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findAllUsers'");
+        return userRepository.findAll();
     }
 
     @Override
@@ -63,15 +51,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(UserUpdateDto data) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateUser'");
+    public User updateUser(User data) {
+        User user = userRepository.findById(data.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", data.getId()));
+
+        return userRepository.save(user.toBuilder().email(data.getEmail()).displayName(data.getDisplayName())
+                .password(data.getPassword()).build());
     }
 
     @Override
     public void deleteUser(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
+        userRepository.delete(user);
     }
 
 }

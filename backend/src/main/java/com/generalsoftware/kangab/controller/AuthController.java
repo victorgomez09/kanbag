@@ -18,10 +18,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.generalsoftware.kangab.converter.UserMapper;
 import com.generalsoftware.kangab.dto.ApiResponseDto;
 import com.generalsoftware.kangab.dto.SignInDto;
 import com.generalsoftware.kangab.dto.SignUpDto;
-import com.generalsoftware.kangab.exception.UserAlreadyExistAuthenticationException;
+import com.generalsoftware.kangab.exception.ResourceAlreadyExistException;
 import com.generalsoftware.kangab.security.LocalUser;
 import com.generalsoftware.kangab.service.UserService;
 
@@ -37,6 +38,7 @@ public class AuthController {
 
     final UserService userService;
     final JwtEncoder encoder;
+    final UserMapper mapper;
 
     final AuthenticationManager authenticationManager;
 
@@ -70,8 +72,8 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<ApiResponseDto<Void>> registerUser(@Valid @RequestBody SignUpDto signUpRequest) {
         try {
-            userService.registerNewUser(signUpRequest);
-        } catch (UserAlreadyExistAuthenticationException e) {
+            userService.registerNewUser(mapper.toEntityFromCreateDto(signUpRequest));
+        } catch (ResourceAlreadyExistException e) {
             log.error("Exception Occurred", e);
             return new ResponseEntity<>(new ApiResponseDto<>(false, "Email Address already in use!", null),
                     HttpStatus.BAD_REQUEST);

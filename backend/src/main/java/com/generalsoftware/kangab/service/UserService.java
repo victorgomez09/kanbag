@@ -2,14 +2,12 @@ package com.generalsoftware.kangab.service;
 
 import java.util.List;
 
-import com.generalsoftware.kangab.dto.SignUpDto;
-import com.generalsoftware.kangab.dto.UserUpdateDto;
-import com.generalsoftware.kangab.exception.UserAlreadyExistAuthenticationException;
+import com.generalsoftware.kangab.exception.ResourceAlreadyExistException;
 import com.generalsoftware.kangab.model.User;
 
 public interface UserService {
 
-    User registerNewUser(SignUpDto signUpRequest) throws UserAlreadyExistAuthenticationException;
+    User registerNewUser(User signUpRequest) throws ResourceAlreadyExistException;
 
     List<User> findAllUsers();
 
@@ -17,7 +15,7 @@ public interface UserService {
 
     User findUserByEmail(String email);
 
-    User updateUser(UserUpdateDto data);
+    User updateUser(User data);
 
     void deleteUser(Long id);
 }

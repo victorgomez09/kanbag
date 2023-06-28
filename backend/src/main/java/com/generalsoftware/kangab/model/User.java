@@ -3,6 +3,7 @@ package com.generalsoftware.kangab.model;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import jakarta.persistence.Entity;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder(toBuilder = true)
 public class User extends BaseModel {
 
     @Serial
