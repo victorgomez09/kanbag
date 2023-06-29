@@ -1,14 +1,28 @@
 <div class="w-full h-full">
     <div class="flex justify-content-center align-items-center h-full">
-        <p-card header="Sign in" styleClass="shadow-2 text-center">
-            <form [formGroup]="formGroup" class="flex flex-column gap-2">
-                <label htmlFor="username">Username</label>
-                <input pInputText id="username" aria-describedby="username-help" formControlName="email" />
-                <small id="username-help" *ngIf="formGroup.pristine && formGroup.errors">Enter your username to reset
-                    your password.</small>
+        <p-card header="Sign in" styleClass="shadow-2 text-center w-25rem">
+            <form [formGroup]="loginForm" class="flex flex-column gap-2 text-left">
+                <div class="flex flex-column gap-2">
+                    <label htmlFor="email">Email</label>
+                    <input pInputText [ngClass]="{'ng-invalid ng-dirty': f.email.errors && f.email.touched}" id="email" aria-describedby="email-help" formControlName="email" />
+                    <div *ngIf="f.email.touched && f.email.errors">
+                        <small ngClass="text-red-500 font-italic" id="email-help" *ngIf="f.email.errors['required']; else validEmail">Email is required</small>
+                        <ng-template #validEmail>
+                            <small ngClass="text-red-500 font-italic" id="email-help">Enter a valid email</small>
+                        </ng-template>
+                    </div>
+                </div>
+
+                <div class="flex flex-column gap-2 mt-2">
+                    <label htmlFor="password">Password</label>
+                    <input pInputText [ngClass]="{'ng-invalid ng-dirty': f.password.errors && f.password.touched}" id="password" aria-describedby="password-help" formControlName="password" />
+                    <div *ngIf="f.password.touched && f.password.errors">
+                        <small ngClass="text-red-500 font-italic" id="email-help" *ngIf="f.password.errors['required']">Password is required</small>
+                    </div>
+                </div>
+
+                <button type="submit" pButton pRipple label="Send" class="mt-2" [disabled]="f.email.errors || f.password.errors"></button>
             </form>
-            {{formGroup.value | json}}
-            {{formGroup.errors | json}}
         </p-card>
     </div>
 </div>
