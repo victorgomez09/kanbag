@@ -28,9 +28,7 @@ import com.generalsoftware.kangab.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/auth")
@@ -74,7 +72,6 @@ public class AuthController {
         try {
             userService.registerNewUser(mapper.toEntityFromCreateDto(signUpRequest));
         } catch (ResourceAlreadyExistException e) {
-            log.error("Exception Occurred", e);
             return new ResponseEntity<>(new ApiResponseDto<>(false, "Email Address already in use!", null),
                     HttpStatus.BAD_REQUEST);
         }

@@ -16,13 +16,14 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @Transactional(value = "transactionManager")
+    // @Transactional(value = "transactionManager")
     public User registerNewUser(User user) throws ResourceAlreadyExistException {
         if (userRepository.existsByEmailIgnoreCase(user.getEmail())) {
             throw new ResourceAlreadyExistException("User", "email", user.getEmail());
@@ -30,7 +31,6 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user = userRepository.save(user);
-        userRepository.flush();
 
         return user;
     }
@@ -47,7 +47,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserByEmail(final String email) {
-        return userRepository.findByEmailIgnoreCase(email);
+        return userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
     }
 
     @Override

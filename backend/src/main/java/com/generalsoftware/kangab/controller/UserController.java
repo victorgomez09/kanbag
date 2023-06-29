@@ -23,7 +23,6 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponseDto<UserDto>> findMe(@CurrentUser String userEmail) {
-        System.out.println("getPrincipal: " + userEmail);
         return ResponseEntity.ok()
                 .body(new ApiResponseDto<>(true, "Current user",
                         mapper.toDto(userService.findUserByEmail(userEmail))));
