@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardUpdateUsersDto {
+public class AddRemoveUsersDto {
 
     private List<String> users;
 

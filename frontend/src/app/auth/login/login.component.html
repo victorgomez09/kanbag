@@ -1,0 +1,14 @@
+<div class="w-full h-full">
+    <div class="flex justify-content-center align-items-center h-full">
+        <p-card header="Sign in" styleClass="shadow-2 text-center">
+            <form [formGroup]="formGroup" class="flex flex-column gap-2">
+                <label htmlFor="username">Username</label>
+                <input pInputText id="username" aria-describedby="username-help" formControlName="email" />
+                <small id="username-help" *ngIf="formGroup.pristine && formGroup.errors">Enter your username to reset
+                    your password.</small>
+            </form>
+            {{formGroup.value | json}}
+            {{formGroup.errors | json}}
+        </p-card>
+    </div>
+</div>

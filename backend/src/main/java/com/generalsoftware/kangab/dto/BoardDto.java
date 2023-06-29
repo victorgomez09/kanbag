@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardDto {
-    
+
     private Long id;
 
     private String name;
@@ -21,6 +21,8 @@ public class BoardDto {
     private UserDto owner;
 
     private List<UserDto> members;
+
+    private List<ColumnDto> columns;
 
     private Date creationDate;
 

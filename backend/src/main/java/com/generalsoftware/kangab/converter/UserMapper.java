@@ -26,6 +26,7 @@ public interface UserMapper {
     @Mappings({
             @Mapping(target = "password", ignore = true),
             @Mapping(target = "secret", ignore = true),
+            @Mapping(target = "boards", ignore = true)
     })
     User toEntity(UserDto target);
 

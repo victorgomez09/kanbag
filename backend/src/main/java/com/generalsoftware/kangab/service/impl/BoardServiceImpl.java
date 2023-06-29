@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.generalsoftware.kangab.dto.BoardUpdateUsersDto;
+import com.generalsoftware.kangab.dto.AddRemoveUsersDto;
 import com.generalsoftware.kangab.exception.ResourceAlreadyExistException;
 import com.generalsoftware.kangab.exception.ResourceNotFoundException;
 import com.generalsoftware.kangab.model.Board;
@@ -57,7 +57,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board addUsers(Long id, BoardUpdateUsersDto usersToAdd) {
+    public Board addUsers(Long id, AddRemoveUsersDto usersToAdd) {
         Board board = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Board", "id", id));
 
@@ -71,7 +71,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board removeUsers(Long id, BoardUpdateUsersDto usersToRemove) {
+    public Board removeUsers(Long id, AddRemoveUsersDto usersToRemove) {
         Board board = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Board", "id", id));
 

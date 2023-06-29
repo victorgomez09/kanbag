@@ -21,7 +21,7 @@ import com.generalsoftware.kangab.dto.ApiResponseDto;
 import com.generalsoftware.kangab.dto.BoardCreateDto;
 import com.generalsoftware.kangab.dto.BoardDto;
 import com.generalsoftware.kangab.dto.BoardUpdateDto;
-import com.generalsoftware.kangab.dto.BoardUpdateUsersDto;
+import com.generalsoftware.kangab.dto.AddRemoveUsersDto;
 import com.generalsoftware.kangab.exception.ResourceAlreadyExistException;
 import com.generalsoftware.kangab.exception.ResourceNotFoundException;
 import com.generalsoftware.kangab.service.BoardService;
@@ -62,7 +62,7 @@ public class BoardController {
 
     @PatchMapping("/{id}/addUser")
     public ResponseEntity<ApiResponseDto<BoardDto>> addUser(@PathVariable Long id,
-            @RequestBody BoardUpdateUsersDto users) {
+            @RequestBody AddRemoveUsersDto users) {
         try {
             return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Added users to board",
                     mapper.toDto(service.addUsers(id, users))));
@@ -74,7 +74,7 @@ public class BoardController {
 
     @PatchMapping("/{id}/removeUser")
     public ResponseEntity<ApiResponseDto<BoardDto>> removeUser(@PathVariable Long id,
-            @RequestBody BoardUpdateUsersDto users) {
+            @RequestBody AddRemoveUsersDto users) {
         try {
             return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Remove users from board",
                     mapper.toDto(service.removeUsers(id, users))));

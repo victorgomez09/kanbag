@@ -2,7 +2,7 @@ package com.generalsoftware.kangab.service;
 
 import java.util.List;
 
-import com.generalsoftware.kangab.dto.BoardUpdateUsersDto;
+import com.generalsoftware.kangab.dto.AddRemoveUsersDto;
 import com.generalsoftware.kangab.model.Board;
 
 public interface BoardService {
@@ -15,9 +15,9 @@ public interface BoardService {
 
     Board update(Board data);
 
-    Board addUsers(Long id, BoardUpdateUsersDto usersEmail);
+    Board addUsers(Long id, AddRemoveUsersDto usersEmail);
 
-    Board removeUsers(Long id, BoardUpdateUsersDto usersEmail);
+    Board removeUsers(Long id, AddRemoveUsersDto usersEmail);
 
     void delete(Long id);
 }
