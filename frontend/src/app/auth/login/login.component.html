@@ -1,34 +1,129 @@
-<div class="w-full h-full">
-    <div class="flex justify-content-center align-items-center h-full">
-        <p-card header="Sign in" styleClass="shadow-2 text-center w-25rem">
-            <form [formGroup]="loginForm" class="flex flex-column gap-2 text-left" (ngSubmit)="onSubmit()">
-                <div class="flex flex-column gap-2">
-                    <label htmlFor="email">Email</label>
-                    <input pInputText [ngClass]="{'ng-invalid ng-dirty': f.email.errors && f.email.touched}" id="email"
-                        aria-describedby="email-help" formControlName="email" />
-                    <div *ngIf="f.email.touched && f.email.errors">
-                        <small ngClass="text-red-500 font-italic" id="email-help"
-                            *ngIf="f.email.errors['required']; else validEmail">Email is required</small>
-                        <ng-template #validEmail>
-                            <small ngClass="text-red-500 font-italic" id="email-help">Enter a valid email</small>
-                        </ng-template>
-                    </div>
-                </div>
+<div class="flex items-center justify-center w-full h-full bg-base-200">
+  <div class="card w-96 bg-base-100 shadow">
+    <div class="card-body">
+      <h2 class="card-title self-center">Sign in</h2>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Email input group -->
+        <div class="form-control w-full max-w-xs">
+          <label class="label">
+            <span class="label-text">Email</span>
+          </label>
+          <input
+            type="text"
+            placeholder="Type here"
+            class="input input-bordered w-full max-w-xs"
+            formControlName="email"
+            [ngClass]="{ 'input-error': f.email.errors && f.email.touched }"
+          />
+          <label class="label" *ngIf="f.email.errors && f.email.touched">
+            <span
+              class="label-text-alt italic text-error"
+              *ngIf="f.email.errors['required']; else invalidEmail"
+            >
+              Email is required
+            </span>
+            <ng-template #invalidEmail>
+              <span class="label-text-alt italic text-error">
+                Enter valid email
+              </span>
+            </ng-template>
+          </label>
+        </div>
+        <!-- Password input group -->
+        <div class="form-control w-full max-w-xs">
+          <label class="label">
+            <span class="label-text">Password</span>
+          </label>
+          <div class="input-group">
+            <input
+              [type]="togglePasswordInput ? 'text' : 'password'"
+              placeholder="Type here"
+              class="input input-bordered w-full max-w-xs"
+              formControlName="password"
+              [ngClass]="{
+                'input-error': f.password.errors && f.password.touched
+              }"
+            />
+            <button
+              type="button"
+              class="btn btn-square"
+              (click)="togglePasswordInputHandler()"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                *ngIf="togglePasswordInput; else passwordHidden"
+              >
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  <g id="Edit / Show">
+                    <g id="Vector">
+                      <path
+                        d="M3.5868 13.7788C5.36623 15.5478 8.46953 17.9999 12.0002 17.9999C15.5308 17.9999 18.6335 15.5478 20.413 13.7788C20.8823 13.3123 21.1177 13.0782 21.2671 12.6201C21.3738 12.2933 21.3738 11.7067 21.2671 11.3799C21.1177 10.9218 20.8823 10.6877 20.413 10.2211C18.6335 8.45208 15.5308 6 12.0002 6C8.46953 6 5.36623 8.45208 3.5868 10.2211C3.11714 10.688 2.88229 10.9216 2.7328 11.3799C2.62618 11.7067 2.62618 12.2933 2.7328 12.6201C2.88229 13.0784 3.11714 13.3119 3.5868 13.7788Z"
+                        stroke="#000000"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                      <path
+                        d="M10 12C10 13.1046 10.8954 14 12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12Z"
+                        stroke="#000000"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                    </g>
+                  </g>
+                </g>
+              </svg>
 
-                <div class="flex flex-column gap-2 mt-2">
-                    <label htmlFor="password">Password</label>
-                    <p-password id="password1" type="password" class="w-full"
-                        [ngClass]="{'ng-invalid ng-dirty': f.password.errors && f.password.touched}" [feedback]="false"
-                        styleClass="p-password p-component p-inputwrapper p-input-icon-right" [style]="{'width':'100%'}"
-                        [inputStyle]="{'width':'100%'}" [toggleMask]="true" formControlName="password"></p-password>
-                    <div *ngIf=" f.password.touched && f.password.errors">
-                        <small ngClass="text-red-500 font-italic" id="email-help"
-                            *ngIf="f.password.errors['required']">Password is required</small>
-                    </div>
-                </div>
+              <ng-template #passwordHidden>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4"
+                >
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g
+                    id="SVGRepo_tracerCarrier"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <g id="Edit / Hide">
+                      <path
+                        id="Vector"
+                        d="M3.99989 4L19.9999 20M16.4999 16.7559C15.1473 17.4845 13.6185 17.9999 11.9999 17.9999C8.46924 17.9999 5.36624 15.5478 3.5868 13.7788C3.1171 13.3119 2.88229 13.0784 2.7328 12.6201C2.62619 12.2933 2.62616 11.7066 2.7328 11.3797C2.88233 10.9215 3.11763 10.6875 3.58827 10.2197C4.48515 9.32821 5.71801 8.26359 7.17219 7.42676M19.4999 14.6335C19.8329 14.3405 20.138 14.0523 20.4117 13.7803L20.4146 13.7772C20.8832 13.3114 21.1182 13.0779 21.2674 12.6206C21.374 12.2938 21.3738 11.7068 21.2672 11.38C21.1178 10.9219 20.8827 10.6877 20.4133 10.2211C18.6338 8.45208 15.5305 6 11.9999 6C11.6624 6 11.3288 6.02241 10.9999 6.06448M13.3228 13.5C12.9702 13.8112 12.5071 14 11.9999 14C10.8953 14 9.99989 13.1046 9.99989 12C9.99989 11.4605 10.2135 10.9711 10.5608 10.6113"
+                        stroke="#000000"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                    </g>
+                  </g>
+                </svg>
+              </ng-template>
+            </button>
+          </div>
+          <label class="label" *ngIf="f.password.errors && f.password.touched">
+            <span class="label-text-alt italic text-error">
+              Password is required
+            </span>
+          </label>
+        </div>
 
-                <button type="submit" pButton pRipple label="Send" class="mt-2" [disabled]="!loginForm.valid"></button>
-            </form>
-        </p-card>
+        <div class="card-actions mt-4">
+          <button type="submit" class="btn btn-primary w-full">Enter</button>
+        </div>
+      </form>
     </div>
+  </div>
 </div>
