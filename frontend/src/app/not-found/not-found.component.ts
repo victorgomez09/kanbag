@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-landing',
+  selector: 'app-not-found',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './landing.component.html',
+  templateUrl: './not-found.component.html',
 })
-export class LandingComponent {}
+export class NotFoundComponent {}

@@ -121,7 +121,13 @@
         </div>
 
         <div class="card-actions mt-4">
-          <button type="submit" class="btn btn-primary w-full">Enter</button>
+          <button
+            type="submit"
+            class="btn btn-primary w-full"
+            [disabled]="loginForm.invalid"
+          >
+            Enter
+          </button>
         </div>
       </form>
     </div>

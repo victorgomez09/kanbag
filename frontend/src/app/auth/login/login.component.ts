@@ -12,7 +12,6 @@ import { Login } from '../models/login.model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
   private fb: FormBuilder = inject(FormBuilder);
@@ -40,7 +39,7 @@ export class LoginComponent {
         console.log({ data: response });
         if (response.success) {
           localStorage.setItem(environment.tokenStorageKey, response.data);
-          this.router.navigate(['']);
+          this.router.navigate(['/boards']);
         }
       });
   }

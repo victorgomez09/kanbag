@@ -36,7 +36,7 @@ public class Column extends BaseModel {
     @jakarta.persistence.Column(name = "name", nullable = false)
     private String name;
 
-    @jakarta.persistence.Column(name = "order", nullable = false)
+    @jakarta.persistence.Column(name = "column_order", nullable = false)
     private int order;
 
     @Builder.Default

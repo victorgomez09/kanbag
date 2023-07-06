@@ -1,19 +1,32 @@
-import { Injectable } from "@angular/core";
-import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
-import { environment } from 'src/environments/environment'
+import { Inject, Injectable, inject } from '@angular/core';
+import {
+  Router,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+} from '@angular/router';
+import { environment } from 'src/environments/environment';
+import { AuthService } from '../auth.service';
+import { $user } from '../store/user.store';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard {
-    constructor(private router: Router) { }
-    canActivate(router: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        // check if the user is logged in
-        if (localStorage.getItem(environment.tokenStorageKey)) {
-            return true;
-        }
+  private authService: AuthService = inject(AuthService);
 
-        // not logged in so redirect to login page with the return url
-        this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
-        return false;
+  constructor(private router: Router) {}
+
+  canActivate(_router: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    // check if the user is logged in
+    if (localStorage.getItem(environment.tokenStorageKey)) {
+      this.authService.getMe().subscribe((result) => {
+        if (result.success) $user.next(result.data);
+      });
+      return true;
     }
 
+    // not logged in so redirect to login page with the return url
+    this.router.navigate(['/sign-in'], {
+      queryParams: { returnUrl: state.url },
+    });
+    return false;
+  }
 }

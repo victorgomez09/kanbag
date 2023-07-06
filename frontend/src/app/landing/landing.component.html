@@ -1,13 +1,20 @@
-<div class="hero min-h-screen bg-base-200">
-  <div class="hero-content text-center">
-    <div class="max-w-md">
-      <h1 class="text-5xl font-bold">Hello there</h1>
-      <p class="py-6">
-        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-        excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a
-        id nisi.
-      </p>
-      <button class="btn btn-primary">Get Started</button>
+<div class="flex flex-col w-full h-full bg-base-200">
+  <div class="flex justify-end items-center p-2 gap-2">
+    <a routerLink="/sign-in" class="btn">Sign in</a>
+    <a routerLink="/sign-up" class="btn btn-primary">Sign up</a>
+  </div>
+  <div class="hero h-full">
+    <div class="hero-content text-center">
+      <div class="max-w-md">
+        <h1 class="text-5xl font-bold">Kanbag</h1>
+        <p class="py-6">
+          A visual tool that empowers your team to manage any type of project,
+          workflow, or task tracking.
+        </p>
+        <button class="btn btn-primary" routerLink="/sign-up">
+          Get Started
+        </button>
+      </div>
     </div>
   </div>
 </div>

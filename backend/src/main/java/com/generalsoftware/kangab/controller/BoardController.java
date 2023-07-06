@@ -48,6 +48,17 @@ public class BoardController {
         }
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<ApiResponseDto<BoardDto>> findById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Get board by id", mapper.toDto(service
+                    .findById(id))));
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponseDto<BoardDto>> create(@CurrentUser String userEmail,
             @RequestBody BoardCreateDto board) {

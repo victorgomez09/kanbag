@@ -30,7 +30,7 @@ public class Card extends BaseModel {
 
     private String description;
 
-    @Column(nullable = false)
+    @Column(name="card_order", nullable = false)
     private int order;
 
     @ManyToOne
@@ -38,6 +38,7 @@ public class Card extends BaseModel {
     private com.generalsoftware.kangab.model.Column column;
 
     @OneToMany
+    @JoinColumn(name = "card_id", referencedColumnName = "id")
     private List<User> users;
 
     @CreationTimestamp
