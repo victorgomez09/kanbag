@@ -1,0 +1,29 @@
+<div class="card w-60 shadow border bg-base-100">
+  <div class="card-body p-4 hover:cursor-pointer" cdkDragHandle>
+    <div class="card-title">
+      {{ column.name }}
+      <ng-content></ng-content>
+    </div>
+  </div>
+
+  <div
+    class="tasks p-2"
+    style="min-height: 2em"
+    cdkDropList
+    cdkDropListOrientation="vertical"
+    [cdkDropListData]="column.cards"
+    (cdkDropListDropped)="drop($event)"
+  >
+    <div
+      class="card bg-base-200 shadow mt-1 mb-1 hover:cursor-pointer"
+      cdkDrag
+      *ngFor="let task of column.cards; let i = index"
+    >
+      <!-- <mat-card [ngClass]="task.label"> {{ task.description }} </mat-card> -->
+      <div class="card-body p-2">
+        {{ task.name }}
+      </div>
+    </div>
+  </div>
+  <button class="btn">+</button>
+</div>

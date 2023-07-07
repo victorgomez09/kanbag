@@ -5,8 +5,10 @@ import { ModelFormGroup } from 'src/app/types';
 import { CreateBoard } from 'src/app/boards/model/create-board.model';
 import { BoardsService } from 'src/app/boards/boards.service';
 import { $boards } from 'src/app/boards/store/boards.store';
-import { take } from 'rxjs';
+import { Observable, Subscription, take } from 'rxjs';
 import { RouterModule } from '@angular/router';
+import { User } from 'src/app/auth/models/user.model';
+import { $user } from 'src/app/auth/store/user.store';
 
 @Component({
   selector: 'app-navbar',
@@ -20,11 +22,23 @@ export class NavbarComponent {
   private boardService: BoardsService = inject(BoardsService);
 
   public boardForm: ModelFormGroup<CreateBoard>;
+  public user: Observable<User>;
+  public userInitials?: string;
 
   constructor() {
     this.boardForm = this.fb.nonNullable.group({
       name: ['', Validators.required],
       description: [''],
+    });
+
+    this.user = $user.asObservable();
+    this.user.subscribe((user) => {
+      this.userInitials = user.displayName
+        .match(/(^\S\S?|\b\S)?/g)
+        ?.join('')
+        .match(/(^\S|\S$)?/g)
+        ?.join('')
+        .toUpperCase();
     });
   }
 

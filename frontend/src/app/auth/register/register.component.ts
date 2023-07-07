@@ -12,13 +12,13 @@ import { Router } from '@angular/router';
 import { ModelFormGroup } from 'src/app/types';
 import { AuthService } from '../auth.service';
 import { Register } from '../models/register.model';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent {
   private fb: FormBuilder = inject(FormBuilder);
