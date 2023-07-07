@@ -1,10 +1,39 @@
-<div class="h-full bg-base-200">
-  <app-navbar></app-navbar>
-  <div
-    class="flex flex-col flex-1 px-4 py-2 bg-base-200"
-    *ngIf="board; else loading"
-  >
-    <h2 class="text-2xl">{{ board.name }}</h2>
+<div class="flex-1 px-4 py-2 bg-base-200" *ngIf="board; else loading">
+  <h2 class="text-2xl">{{ board.name }}</h2>
+
+  <div class="flex items-center mt-4 gap-2" style="max-height: calc(100% - 2em);" cdkDropList
+    cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropGrid($event)" cdkDropListGroup>
+    <div class="card shadow bg-base-100 w-60 hover:cursor-pointer" cdkDragLockAxis="x" cdkDrag
+      *ngFor="let column of columns | async">
+      <div class="card-body p-4">
+        <h2 class="card-title shadow-sm" cdkDragHandle>{{ column.name }}</h2>
+
+        <div class="h-10" id="{{column.id}}" cdkDropList [cdkDropListData]="column.cards"
+          (cdkDropListDropped)="drop($event)">
+          <div class="card" *ngFor="let item of column.cards" cdkDrag>
+            {{ item.name }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create column -->
+    <div class="card border hover:cursor-pointer hover:shadow">
+      <div class="card-body p-4" (click)="showCreateColumnInputHandler()">
+        <span class="italic font-thin" *ngIf="!showCreateColumnInput; else showCreateInput">
+          Create new column
+        </span>
+        <ng-template #showCreateInput>
+          <input type="text" placeholder="Column name" class="input input-bordered" [formControl]="nameFormControl"
+            [ngClass]="{'input-error': nameFormControl.touched && nameFormControl.errors}" />
+          <label class="label" *ngIf="nameFormControl.touched && nameFormControl.errors">
+            <span class="label-text-alt italic text-error">Column name is required</span>
+          </label>
+          <button type="button" class="btn btn-sm btn-primary mt-2" (click)="createColumn()"
+            [disabled]="nameFormControl.invalid">Create</button>
+        </ng-template>
+      </div>
+    </div>
   </div>
 </div>
 

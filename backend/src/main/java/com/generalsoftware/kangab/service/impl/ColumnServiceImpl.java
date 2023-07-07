@@ -28,8 +28,9 @@ public class ColumnServiceImpl implements ColumnService {
     @Override
     public Column create(Long boardId, Column data) {
         Board board = boardService.findById(boardId);
+        Long order = repository.countByBoard(board);
 
-        return repository.save(data.toBuilder().board(board).build());
+        return repository.save(data.toBuilder().order(order).board(board).build());
     }
 
     @Override

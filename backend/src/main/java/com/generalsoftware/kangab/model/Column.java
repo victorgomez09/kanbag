@@ -37,7 +37,7 @@ public class Column extends BaseModel {
     private String name;
 
     @jakarta.persistence.Column(name = "column_order", nullable = false)
-    private int order;
+    private Long order;
 
     @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "column")

@@ -1,7 +1,5 @@
 package com.generalsoftware.kangab.dto;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,13 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ColumnDto {
-
-    private Long id;
-
+public class ColumnCreateDto {
+    
+    private Long boardId;
     private String name;
-
-    private int order;
-
-    private List<CardDto> cards;
 }

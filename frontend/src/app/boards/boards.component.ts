@@ -14,6 +14,7 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule, NavbarComponent],
   templateUrl: './boards.component.html',
+  styleUrls: ['./boards.component.scss']
 })
 export class BoardsComponent {
   private boardService: BoardsService = inject(BoardsService);

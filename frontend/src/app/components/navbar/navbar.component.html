@@ -1,20 +1,9 @@
-<div class="navbar sticky top-0 bg-base-100 shadow z-50">
+<div class="navbar fixed top-0 bg-base-100 shadow z-50">
   <div class="navbar-start">
     <div class="dropdown">
       <label tabindex="0" class="btn btn-ghost lg:hidden">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h8m-8 6h16"
-          />
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" />
         </svg>
       </label>
       <!-- <ul
@@ -50,9 +39,7 @@
     </ul> -->
   </div>
   <div class="navbar-end">
-    <a class="btn btn-primary" onclick="createBoardModal.showModal()"
-      >Create board</a
-    >
+    <a class="btn btn-primary" onclick="createBoardModal.showModal()">Create board</a>
   </div>
 </div>
 
@@ -67,13 +54,8 @@
         <label class="label">
           <span class="label-text">Name</span>
         </label>
-        <input
-          type="text"
-          placeholder="Board one"
-          class="input input-bordered w-full"
-          [ngClass]="{ 'input-error': f.name.errors && f.name.touched }"
-          formControlName="name"
-        />
+        <input type="text" placeholder="Board one" class="input input-bordered w-full"
+          [ngClass]="{ 'input-error': f.name.errors && f.name.touched }" formControlName="name" />
         <label class="label" *ngIf="f.name.errors && f.name.touched">
           <span class="label-text-alt italic text-error">Name is required</span>
         </label>
@@ -83,19 +65,12 @@
         <label class="label">
           <span class="label-text">Description</span>
         </label>
-        <textarea
-          placeholder="Board one description"
-          class="textarea textarea-bordered w-full"
-          formControlName="description"
-        ></textarea>
+        <textarea placeholder="Board one description" class="textarea textarea-bordered w-full"
+          formControlName="description"></textarea>
       </div>
 
       <div class="modal-action">
-        <button
-          class="btn btn-sm btn-primary"
-          (click)="submit()"
-          [disabled]="boardForm.invalid"
-        >
+        <button class="btn btn-sm btn-primary" (click)="submit()" [disabled]="boardForm.invalid">
           Create
         </button>
       </div>
