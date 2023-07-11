@@ -3,6 +3,7 @@ package com.generalsoftware.kangab.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.generalsoftware.kangab.annotation.CurrentUser;
-import com.generalsoftware.kangab.converter.BoardMapper;
 import com.generalsoftware.kangab.dto.ApiResponseDto;
 import com.generalsoftware.kangab.dto.BoardCreateDto;
 import com.generalsoftware.kangab.dto.BoardDto;
@@ -24,6 +24,7 @@ import com.generalsoftware.kangab.dto.BoardUpdateDto;
 import com.generalsoftware.kangab.dto.AddRemoveUsersDto;
 import com.generalsoftware.kangab.exception.ResourceAlreadyExistException;
 import com.generalsoftware.kangab.exception.ResourceNotFoundException;
+import com.generalsoftware.kangab.model.Board;
 import com.generalsoftware.kangab.service.BoardService;
 
 import lombok.AllArgsConstructor;
@@ -34,14 +35,14 @@ import lombok.AllArgsConstructor;
 public class BoardController {
 
     private final BoardService service;
-    private final BoardMapper mapper;
+    private final ModelMapper mapper;
 
     @GetMapping
     public ResponseEntity<ApiResponseDto<List<BoardDto>>> findByUser(@CurrentUser String userEmail) {
         try {
-            return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Get all boards from user", service
-                    .findByUser(userEmail).stream().map(board -> mapper.toDto(board))
-                    .collect(Collectors.toList())));
+            return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Get all boards from user",
+                    service.findByUser(userEmail).stream().map(board -> mapper.map(board, BoardDto.class))
+                            .collect(Collectors.toList())));
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
                     HttpStatus.BAD_REQUEST);
@@ -51,8 +52,8 @@ public class BoardController {
     @GetMapping("{id}")
     public ResponseEntity<ApiResponseDto<BoardDto>> findById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Get board by id", mapper.toDto(service
-                    .findById(id))));
+            return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Get board by id", mapper.map(service
+                    .findById(id), BoardDto.class)));
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
                     HttpStatus.BAD_REQUEST);
@@ -64,7 +65,7 @@ public class BoardController {
             @RequestBody BoardCreateDto board) {
         try {
             return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Create board",
-                    mapper.toDto(service.create(userEmail, mapper.toEntityFromCreateDto(board)))));
+                    mapper.map(service.create(userEmail, mapper.map(board, Board.class)), BoardDto.class)));
         } catch (ResourceAlreadyExistException e) {
             return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
                     HttpStatus.BAD_REQUEST);
@@ -76,7 +77,7 @@ public class BoardController {
             @RequestBody AddRemoveUsersDto users) {
         try {
             return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Added users to board",
-                    mapper.toDto(service.addUsers(id, users))));
+                    mapper.map(service.addUsers(id, users), BoardDto.class)));
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
                     HttpStatus.BAD_REQUEST);
@@ -88,7 +89,7 @@ public class BoardController {
             @RequestBody AddRemoveUsersDto users) {
         try {
             return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Remove users from board",
-                    mapper.toDto(service.removeUsers(id, users))));
+                    mapper.map(service.removeUsers(id, users), BoardDto.class)));
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
                     HttpStatus.BAD_REQUEST);
@@ -99,7 +100,7 @@ public class BoardController {
     public ResponseEntity<ApiResponseDto<BoardDto>> update(@RequestBody BoardUpdateDto board) {
         try {
             return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Update board",
-                    mapper.toDto(service.update(mapper.toEntityFromUpdateDto(board)))));
+                    mapper.map(service.update(mapper.map(board, Board.class)), BoardDto.class)));
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
                     HttpStatus.BAD_REQUEST);

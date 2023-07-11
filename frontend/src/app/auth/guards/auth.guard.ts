@@ -12,7 +12,7 @@ import { $user } from '../store/user.store';
 export class AuthGuard {
   private authService: AuthService = inject(AuthService);
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   canActivate(_router: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     // check if the user is logged in

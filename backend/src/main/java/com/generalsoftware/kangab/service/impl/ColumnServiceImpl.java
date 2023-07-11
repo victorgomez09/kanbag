@@ -29,6 +29,7 @@ public class ColumnServiceImpl implements ColumnService {
     public Column create(Long boardId, Column data) {
         Board board = boardService.findById(boardId);
         Long order = repository.countByBoard(board);
+        System.out.println("data: " + data.toString());
 
         return repository.save(data.toBuilder().order(order).board(board).build());
     }

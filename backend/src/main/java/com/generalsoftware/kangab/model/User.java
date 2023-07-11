@@ -49,6 +49,9 @@ public class User extends BaseModel {
     @ManyToMany(mappedBy = "members")
     private List<Board> boards;
 
+    @ManyToMany(mappedBy = "users")
+    private List<Card> cards;
+
     public User(String email, String password) {
         this.email = email;
         this.password = password;

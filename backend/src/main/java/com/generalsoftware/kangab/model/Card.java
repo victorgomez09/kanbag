@@ -6,16 +6,22 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.With;
 
 @Entity
 @Table(name = "cards")
@@ -23,6 +29,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder(toBuilder = true)
+@ToString
+@With
 public class Card extends BaseModel {
 
     @Column(nullable = false)
@@ -30,15 +39,15 @@ public class Card extends BaseModel {
 
     private String description;
 
-    @Column(name="card_order", nullable = false)
+    @Column(name = "card_order", nullable = false)
     private int order;
 
     @ManyToOne
     @JoinColumn(name = "column_id", nullable = false)
     private com.generalsoftware.kangab.model.Column column;
 
-    @OneToMany
-    @JoinColumn(name = "card_id", referencedColumnName = "id")
+    @JoinTable(name = "card_users", joinColumns = @JoinColumn(name = "card_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "user_id", nullable = false))
+    @ManyToMany
     private List<User> users;
 
     @CreationTimestamp

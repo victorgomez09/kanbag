@@ -23,11 +23,11 @@ export class BoardsComponent {
   public boards: Observable<Board[]>;
 
   constructor() {
-    $user.subscribe((result) => (this.user = result));
     this.boardService.findByUser().subscribe((result) => {
       if (result.success) $boards.next(result.data);
     });
 
+    $user.subscribe(result => this.user = result)
     this.boards = $boards.asObservable();
   }
 }

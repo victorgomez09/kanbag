@@ -7,11 +7,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode
 @MappedSuperclass
 public class BaseModel implements Serializable {
 
@@ -20,21 +24,4 @@ public class BaseModel implements Serializable {
     @Column(name = "id", updatable = false, nullable = false)
     protected Long id;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-
-        if (!this.getClass().isInstance(o))
-            return false;
-
-        BaseModel other = (BaseModel) o;
-
-        return id != null && id.equals(other.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

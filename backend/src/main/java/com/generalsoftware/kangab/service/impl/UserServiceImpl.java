@@ -56,8 +56,10 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(data.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", data.getId()));
 
-        return userRepository.save(user.toBuilder().email(data.getEmail()).displayName(data.getDisplayName())
-                .password(data.getPassword()).build());
+        // return
+        // userRepository.save(user.toBuilder().email(data.getEmail()).displayName(data.getDisplayName())
+        // .password(data.getPassword()).build());
+        return null;
     }
 
     @Override

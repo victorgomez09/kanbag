@@ -7,6 +7,8 @@ import { Board } from './model/board.model';
 import { Observable } from 'rxjs';
 import { CreateColumn } from './model/create-column.model';
 import { Column } from './model/column.model';
+import { Card, UpdateCardOrder } from './model/card.model';
+import { CreateCard } from './model/create-card.model';
 
 @Injectable({
   providedIn: 'root',
@@ -51,11 +53,27 @@ export class BoardsService {
     );
   }
 
-  createColumn(data: CreateColumn): Observable<ApiResponse<Column>> {
+  createColumn(data: { boardId: number, name: string }): Observable<ApiResponse<Column>> {
     return this.http.post<ApiResponse<Column>>(`${environment.apiUrl}/columns`, data, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem(environment.tokenStorageKey)}`
       }
-    })
+    });
+  }
+
+  createCard(data: Card): Observable<ApiResponse<Card>> {
+    return this.http.post<ApiResponse<Card>>(`${environment.apiUrl}/cards`, data, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem(environment.tokenStorageKey)}`
+      }
+    });
+  }
+
+  updateCardsOrder(data: Card[]): Observable<ApiResponse<Card[]>> {
+    return this.http.put<ApiResponse<Card[]>>(`${environment.apiUrl}/cards/updateOrder`, data, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem(environment.tokenStorageKey)}`
+      }
+    });
   }
 }

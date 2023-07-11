@@ -44,21 +44,9 @@ export class BoardComponent {
 
     this.boardService.findById(id).subscribe((result) => {
       if (result.success) {
-        console.log('board', result.data);
         this.board = result.data;
+
         $columns.next(result.data.columns);
-        this.board.columns[0].cards = [
-          {
-            id: 1,
-            name: 'Tes card',
-            description: '',
-          },
-          {
-            id: 2,
-            name: 'Tes card 2',
-            description: '',
-          },
-        ];
       }
     });
     this.columns = $columns.asObservable();

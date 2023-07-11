@@ -53,8 +53,9 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(config -> {
                     CorsConfiguration configuration = new CorsConfiguration();
                     configuration.setAllowedOrigins(
-                            Arrays.asList("http://localhost:4200", "https://4200-victorgomez09-kanbag-kcjhhegshjj.ws-eu101.gitpod.io"));
-                    configuration.setAllowedMethods(Arrays.asList("GET", "POST"));
+                            Arrays.asList("http://localhost:4200",
+                                    "https://4200-victorgomez09-kanbag-kcjhhegshjj.ws-eu101.gitpod.io"));
+                    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT"));
                     configuration.setAllowedHeaders(List.of("*"));
 
                     return configuration;

@@ -20,6 +20,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "columns")
@@ -28,6 +29,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder(toBuilder = true)
+@ToString
 public class Column extends BaseModel {
 
     @Serial
