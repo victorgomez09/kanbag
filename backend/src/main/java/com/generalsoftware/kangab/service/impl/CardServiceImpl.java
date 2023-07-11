@@ -27,6 +27,7 @@ public class CardServiceImpl implements CardService {
 
         data.setColumn(column);
         data.setOrder(column.getCards().size());
+        data.setUsers(Collections.emptyList());
 
         return repository.save(data);
     }
