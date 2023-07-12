@@ -53,27 +53,65 @@ export class BoardsService {
     );
   }
 
-  createColumn(data: { boardId: number, name: string }): Observable<ApiResponse<Column>> {
-    return this.http.post<ApiResponse<Column>>(`${environment.apiUrl}/columns`, data, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem(environment.tokenStorageKey)}`
+  createColumn(data: {
+    boardId: number;
+    name: string;
+  }): Observable<ApiResponse<Column>> {
+    return this.http.post<ApiResponse<Column>>(
+      `${environment.apiUrl}/columns`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(
+            environment.tokenStorageKey
+          )}`,
+        },
       }
-    });
+    );
   }
 
   createCard(data: Card): Observable<ApiResponse<Card>> {
-    return this.http.post<ApiResponse<Card>>(`${environment.apiUrl}/cards`, data, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem(environment.tokenStorageKey)}`
+    return this.http.post<ApiResponse<Card>>(
+      `${environment.apiUrl}/cards`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(
+            environment.tokenStorageKey
+          )}`,
+        },
       }
-    });
+    );
   }
 
   updateCardsOrder(data: Card[]): Observable<ApiResponse<Card[]>> {
-    return this.http.put<ApiResponse<Card[]>>(`${environment.apiUrl}/cards/updateOrder`, data, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem(environment.tokenStorageKey)}`
+    return this.http.put<ApiResponse<Card[]>>(
+      `${environment.apiUrl}/cards/updateOrder`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(
+            environment.tokenStorageKey
+          )}`,
+        },
       }
-    });
+    );
+  }
+
+  updateCardsOrderAndColumns(data: {
+    prevColumn: Card[];
+    currentColumn: Card[];
+  }): Observable<ApiResponse<Card[]>> {
+    return this.http.put<ApiResponse<Card[]>>(
+      `${environment.apiUrl}/cards/updateOrderAndColumn`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(
+            environment.tokenStorageKey
+          )}`,
+        },
+      }
+    );
   }
 }

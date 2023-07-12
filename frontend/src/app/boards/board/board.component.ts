@@ -15,6 +15,7 @@ import { ColumnComponent } from '../components/column/column.component';
 import { Board } from '../model/board.model';
 import { Column } from '../model/column.model';
 import { $columns } from '../store/columns.store';
+import { Card } from '../model/card.model';
 
 @Component({
   selector: 'app-board',
@@ -38,6 +39,7 @@ export class BoardComponent {
   public board!: Board;
   public columns: Observable<Column[]>;
   public showCreateColumnInput: boolean;
+  public selectedCard?: Card;
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('id')! as unknown as number;
@@ -87,30 +89,7 @@ export class BoardComponent {
     );
   }
 
-  // dropGrid(event: CdkDragDrop<string[]>): void {
-  //   moveItemInArray(
-  //     this.board.columns,
-  //     event.previousIndex,
-  //     event.currentIndex
-  //   );
-  // }
-
-  // drop(event: CdkDragDrop<Card[]>) {
-  //   if (event.previousContainer === event.container) {
-  //     moveItemInArray(
-  //       event.container.data,
-  //       event.previousIndex,
-  //       event.currentIndex
-  //     );
-  //   } else {
-  //     console.log('prev', event.previousContainer.data);
-  //     console.log('next', event.container.data);
-  //     transferArrayItem(
-  //       event.previousContainer.data,
-  //       event.container.data,
-  //       event.previousIndex,
-  //       event.currentIndex
-  //     );
-  //   }
-  // }
+  setSelectedCard(event: Card): void {
+    this.selectedCard = event;
+  }
 }

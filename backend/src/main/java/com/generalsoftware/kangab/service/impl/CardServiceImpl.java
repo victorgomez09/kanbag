@@ -1,6 +1,6 @@
 package com.generalsoftware.kangab.service.impl;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -26,20 +26,51 @@ public class CardServiceImpl implements CardService {
         Column column = columnService.findById(columnId);
 
         data.setColumn(column);
-        data.setOrder(column.getCards().size());
-        data.setUsers(Collections.emptyList());
+        data.setOrder(column.getCards() == null ? 0 : column.getCards().size());
+        data.setUsers(new ArrayList<>());
 
         return repository.save(data);
     }
 
     @Override
     public List<Card> updateOrder(List<Card> data) {
-        List<Card> result = Collections.emptyList();
+        List<Card> result = new ArrayList<>();
 
         data.stream().forEach(item -> {
             Card card = repository.findById(item.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Card", "id", item.getId()));
-            result.add(repository.save(card.toBuilder().order(item.getOrder()).build()));
+            card.setOrder(item.getOrder());
+            card.setUsers(new ArrayList<>(card.getUsers()));
+
+            result.add(repository.save(card));
+        });
+
+        return result;
+    }
+
+    @Override
+    public List<Card> updateOrderAndColumn(List<Card> prevData, List<Card> currentData) {
+        List<Card> result = new ArrayList<>();
+
+        prevData.stream().forEach(item -> {
+            Card card = repository.findById(item.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Card", "id", item.getId()));
+            card.setOrder(item.getOrder());
+            card.setUsers(new ArrayList<>(card.getUsers()));
+            card.setColumn(columnService.findById(item.getColumn().getId()));
+
+            result.add(repository.save(card));
+        });
+
+        currentData.stream().forEach(item -> {
+            Card card = repository.findById(item.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Card", "id", item.getId()));
+            card.setOrder(item.getOrder());
+            card.setUsers(new ArrayList<>(card.getUsers()));
+            System.out.println("card: " + card.getTitle() + " column: " + item.getColumn().getId());
+            card.setColumn(columnService.findById(item.getColumn().getId()));
+
+            result.add(repository.save(card));
         });
 
         return result;

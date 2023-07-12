@@ -1,75 +1,83 @@
-<div class="flex-1 px-4 py-2 bg-base-200 overflow-y-hidden" *ngIf="board; else loading">
+<div
+  class="flex-1 px-4 py-2 bg-base-200 overflow-y-hidden"
+  *ngIf="board; else loading"
+>
   <h2 class="text-2xl">{{ board.name }}</h2>
 
-  <div class="flex gap-2 mt-4 h-full columns" style="max-height: calc(100vh - 10em)" cdkDropList
-    cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)" cdkDropListGroup>
-    <app-column cdkDrag *ngFor="let column of columns | async" [column]="column">
+  <div
+    class="flex gap-2 mt-4 h-full columns"
+    style="max-height: calc(100vh - 10em)"
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    (cdkDropListDropped)="drop($event)"
+    cdkDropListGroup
+  >
+    <app-column
+      cdkDrag
+      *ngFor="let column of columns | async"
+      [column]="column"
+      (newItemEvent)="setSelectedCard($event)"
+    >
     </app-column>
 
     <div class="flex flex-col">
-      <button class="btn btn-active w-32" (click)="showCreateColumnInputHandler()" cdkDragDisabled
-        *ngIf="!showCreateColumnInput; else showCreateInput">
+      <button
+        class="btn btn-active w-32"
+        (click)="showCreateColumnInputHandler()"
+        cdkDragDisabled
+        *ngIf="!showCreateColumnInput; else showCreateInput"
+      >
         New column
       </button>
 
       <ng-template #showCreateInput>
-        <input type="text" placeholder="Column name" class="input input-bordered" [formControl]="nameFormControl"
+        <input
+          type="text"
+          placeholder="Column name"
+          class="input input-bordered"
+          [formControl]="nameFormControl"
           [ngClass]="{
             'input-error': nameFormControl.touched && nameFormControl.errors
-          }" />
-        <label class="label" *ngIf="nameFormControl.touched && nameFormControl.errors">
-          <span class="label-text-alt italic text-error">Column name is required</span>
+          }"
+        />
+        <label
+          class="label"
+          *ngIf="nameFormControl.touched && nameFormControl.errors"
+        >
+          <span class="label-text-alt italic text-error"
+            >Column name is required</span
+          >
         </label>
-        <button type="button" class="btn btn-sm btn-primary mt-2" (click)="createColumn()"
-          [disabled]="nameFormControl.invalid">
+        <button
+          type="button"
+          class="btn btn-sm btn-primary mt-2"
+          (click)="createColumn()"
+          [disabled]="nameFormControl.invalid"
+        >
           Create
         </button>
       </ng-template>
     </div>
   </div>
 
-  <!-- <div
-    class="flex justify-start mt-4 gap-2"
-    style="max-height: calc(100% - 3em)"
-    cdkDropList
-    cdkDropListOrientation="horizontal"
-    (cdkDropListDropped)="dropGrid($event)"
-    cdkDropListGroup
-  > -->
-  <!-- <div
-      class="card shadow bg-base-100 w-60 hover:cursor-pointer"
-      cdkDragLockAxis="x"
-      cdkDrag
-      *ngFor="let column of columns | async"
-    >
-      <div class="card-body p-4">
-        <h2 class="card-title shadow-sm" cdkDragHandle>{{ column.name }}</h2>
-
-        <div
-          class="card-list"
-          style="min-height: 3em"
-          id="{{ column.id }}"
-          cdkDropList
-          [cdkDropListData]="column.cards"
-          (cdkDropListDropped)="drop($event)"
-        >
-          <div
-            class="card border shadow-sm p-4 mt-2 card-box"
-            *ngFor="let item of column.cards"
-            cdkDrag
-          >
-            <div class="custom-placeholder" *cdkDragPlaceholder></div>
-            {{ item.name }}
-          </div>
-        </div>
-
-        <div class="border-t-2 mt-2">
-          <div class="p-2 text-center">create new card</div>
-        </div>
+  <dialog id="cardModal" class="modal">
+    <form method="dialog" class="modal-box">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+        ✕
+      </button>
+      <h3 class="font-bold text-lg">{{ selectedCard?.title }}</h3>
+      <div class="py-4">
+        <span class="font-semibold">Description</span>
+        <p class="italic font-thin">
+          {{
+            !selectedCard?.description
+              ? "No description"
+              : selectedCard?.description
+          }}
+        </p>
       </div>
-    </div> -->
-
-  <!-- Create column -->
+    </form>
+  </dialog>
 </div>
 
 <ng-template #loading>

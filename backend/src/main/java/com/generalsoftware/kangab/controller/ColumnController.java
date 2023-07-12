@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.generalsoftware.kangab.dto.ApiResponseDto;
-import com.generalsoftware.kangab.dto.ColumnCreateDto;
 import com.generalsoftware.kangab.dto.ColumnDto;
 import com.generalsoftware.kangab.exception.ResourceNotFoundException;
 import com.generalsoftware.kangab.model.Column;

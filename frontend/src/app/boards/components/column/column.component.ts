@@ -5,7 +5,14 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BehaviorSubject, Observable, take } from 'rxjs';
 import { BoardsService } from '../../boards.service';
@@ -21,9 +28,11 @@ import { Column } from '../../model/column.model';
 })
 export class ColumnComponent implements OnInit {
   @Input() column!: Column;
+  @Output() newItemEvent = new EventEmitter<Card>();
+  public nameFormControl: FormControl;
   public cards: Observable<Card[]>;
   public addNewCardToggle: boolean;
-  public nameFormControl: FormControl;
+  public error: boolean;
 
   private boardService: BoardsService = inject(BoardsService);
   private $cards = new BehaviorSubject<Card[]>([]);
@@ -34,6 +43,7 @@ export class ColumnComponent implements OnInit {
       validators: [Validators.required],
     });
     this.cards = this.$cards.asObservable();
+    this.error = false;
   }
 
   ngOnInit(): void {
@@ -47,26 +57,50 @@ export class ColumnComponent implements OnInit {
         event.previousIndex,
         event.currentIndex
       );
-      console.log('current', event.container.data);
       event.container.data.map((item, order) => {
-        const card = this.column.cards?.find(card => item.title === card.title);
+        const card = this.column.cards?.find(
+          (card) => item.title === card.title
+        );
         if (card) card.order = order;
-      })
-      this.$cards.next(this.column.cards!)
-      console.log('cards with updated index', this.column.cards);
-      console.log('compare', event.container.data === this.column.cards)
-      this.boardService.updateCardsOrder(event.container.data).subscribe(response => {
-        if (response.message) this.$cards.next(response.data);
-      })
+      });
+      this.boardService
+        .updateCardsOrder(event.container.data)
+        .subscribe((response) => {
+          if (!response.success) this.error = true;
+        });
     } else {
-      console.log('prev', event.previousContainer.data);
-      console.log('next', event.container.data);
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
+
+      event.container.data.map((item, order) => {
+        const card = this.column.cards?.find(
+          (card) => item.title === card.title
+        );
+        if (card) {
+          card.order = order;
+          card.columnId = Number(event.container.id);
+        }
+      });
+
+      event.previousContainer.data.map((item, order) => {
+        const card = this.column.cards?.find(
+          (card) => item.title === card.title
+        );
+        if (card) card.order = order;
+      });
+
+      this.boardService
+        .updateCardsOrderAndColumns({
+          prevColumn: event.previousContainer.data,
+          currentColumn: event.container.data,
+        })
+        .subscribe((response) => {
+          if (!response.success) this.error = true;
+        });
     }
   }
 
@@ -75,18 +109,16 @@ export class ColumnComponent implements OnInit {
   }
 
   addNewCard() {
-    this.boardService.createCard({ columnId: this.column.id!, title: this.nameFormControl.value })
-      .subscribe(response => {
+    this.boardService
+      .createCard({
+        columnId: this.column.id!,
+        title: this.nameFormControl.value,
+      })
+      .subscribe((response) => {
         if (response.success) {
-          // const newArray = [...this.column.cards, response.data]
-          // this.column.cards = newArray;
-          // this.nameFormControl.reset();
-          // this.addNewCardToggle = false;
-          console.log('response', response);
-
           this.$cards.pipe(take(1)).subscribe((oldArray) => {
-            if (!oldArray.length) {
-              this.$cards.next([response.data])
+            if (!oldArray) {
+              this.$cards.next([response.data]);
             } else {
               const newArray = [...oldArray, response.data];
               this.$cards.next(newArray);
@@ -95,6 +127,10 @@ export class ColumnComponent implements OnInit {
             this.addNewCardToggle = false;
           });
         }
-      })
+      });
+  }
+
+  setSelectedCard(card: Card): void {
+    this.newItemEvent.emit(card);
   }
 }

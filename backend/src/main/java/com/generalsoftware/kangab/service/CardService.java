@@ -9,4 +9,6 @@ public interface CardService {
     Card create(Long columnId, Card data);
 
     List<Card> updateOrder(List<Card> data);
+
+    List<Card> updateOrderAndColumn(List<Card> prevData, List<Card> currentData);
 }

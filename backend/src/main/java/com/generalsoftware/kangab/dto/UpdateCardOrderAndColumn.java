@@ -3,21 +3,17 @@ package com.generalsoftware.kangab.dto;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
-public class ColumnDto {
+@NoArgsConstructor
+public class UpdateCardOrderAndColumn {
 
-    private Long id;
+    private List<CardDto> prevColumn;
 
-    private String name;
-
-    private int order;
-
-    private List<CardDto> cards;
-
-    private Long boardId;
+    private List<CardDto> currentColumn;
 }
