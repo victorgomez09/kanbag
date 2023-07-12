@@ -70,6 +70,20 @@ export class BoardsService {
     );
   }
 
+  updateColumnsOrder(data: Column[]): Observable<ApiResponse<Column[]>> {
+    return this.http.put<ApiResponse<Column[]>>(
+      `${environment.apiUrl}/columns/updateOrder`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(
+            environment.tokenStorageKey
+          )}`,
+        },
+      }
+    );
+  }
+
   createCard(data: Card): Observable<ApiResponse<Card>> {
     return this.http.post<ApiResponse<Card>>(
       `${environment.apiUrl}/cards`,

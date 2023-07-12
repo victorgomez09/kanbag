@@ -40,6 +40,7 @@ export class BoardComponent {
   public columns: Observable<Column[]>;
   public showCreateColumnInput: boolean;
   public selectedCard?: Card;
+  public error: boolean;
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('id')! as unknown as number;
@@ -57,6 +58,7 @@ export class BoardComponent {
       validators: [Validators.required],
     });
     this.showCreateColumnInput = false;
+    this.error = false;
   }
 
   showCreateColumnInputHandler(): void {
@@ -81,12 +83,24 @@ export class BoardComponent {
       });
   }
 
-  drop(event: CdkDragDrop<string[]>) {
+  drop(event: CdkDragDrop<Column[]>) {
     moveItemInArray(
       this.board.columns,
       event.previousIndex,
       event.currentIndex
     );
+    this.board.columns.map((item, order) => {
+      const column = this.board.columns.find(
+        (column) => item.name === column.name
+      );
+      if (column) column.order = order;
+    });
+
+    this.boardService
+      .updateColumnsOrder(this.board.columns)
+      .subscribe((response) => {
+        if (!response.success) this.error = true;
+      });
   }
 
   setSelectedCard(event: Card): void {

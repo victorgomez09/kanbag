@@ -1,5 +1,8 @@
 package com.generalsoftware.kangab.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.generalsoftware.kangab.exception.ResourceNotFoundException;
@@ -40,6 +43,21 @@ public class ColumnServiceImpl implements ColumnService {
                 .orElseThrow(() -> new ResourceNotFoundException("Column", "id", data.getId()));
 
         return repository.save(column.toBuilder().name(data.getName()).build());
+    }
+
+    @Override
+    public List<Column> updateOrder(List<Column> data) {
+        List<Column> result = new ArrayList<>();
+
+        data.stream().forEach(item -> {
+            Column card = repository.findById(item.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Column", "id", item.getId()));
+            card.setOrder(item.getOrder());
+
+            result.add(repository.save(card));
+        });
+
+        return result;
     }
 
 }

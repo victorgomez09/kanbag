@@ -32,7 +32,10 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public Board findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Board", "id", id));
+        Board board = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Board", "id", id));
+        board.getColumns().sort((c1, c2) -> c1.getOrder().compareTo(c2.getOrder()));
+
+        return board;
     }
 
     @Override
