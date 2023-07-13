@@ -3,6 +3,7 @@ export interface Card {
     title: string;
     description?: string;
     order?: number;
+    priority?: "LOW" | "MEDIUM" | "HIGH";
     columnId: number;
 }
 

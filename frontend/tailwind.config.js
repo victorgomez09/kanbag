@@ -5,5 +5,10 @@ module.exports = {
     extend: {},
   },
   plugins: [require("daisyui")],
+  safelist: [
+    'border-l-success',
+    'border-l-warning',
+    'border-l-error',
+  ]
 }
 

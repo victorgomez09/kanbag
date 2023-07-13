@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.generalsoftware.kangab.exception.ResourceNotFoundException;
 import com.generalsoftware.kangab.model.Card;
 import com.generalsoftware.kangab.model.Column;
+import com.generalsoftware.kangab.model.Priority;
 import com.generalsoftware.kangab.repository.CardRepository;
 import com.generalsoftware.kangab.service.CardService;
 import com.generalsoftware.kangab.service.ColumnService;
@@ -28,8 +29,20 @@ public class CardServiceImpl implements CardService {
         data.setColumn(column);
         data.setOrder(column.getCards() == null ? 0 : column.getCards().size());
         data.setUsers(new ArrayList<>());
+        data.setPriority(Priority.LOW);
 
         return repository.save(data);
+    }
+
+    @Override
+    public Card update(Long id, Card data) {
+        Card card = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Card", "id", id));
+
+        card.setTitle(data.getTitle());
+        card.setDescription(data.getDescription());
+        card.setPriority(data.getPriority());
+
+        return repository.save(card);
     }
 
     @Override
@@ -67,7 +80,6 @@ public class CardServiceImpl implements CardService {
                     .orElseThrow(() -> new ResourceNotFoundException("Card", "id", item.getId()));
             card.setOrder(item.getOrder());
             card.setUsers(new ArrayList<>(card.getUsers()));
-            System.out.println("card: " + card.getTitle() + " column: " + item.getColumn().getId());
             card.setColumn(columnService.findById(item.getColumn().getId()));
 
             result.add(repository.save(card));

@@ -8,6 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -37,6 +39,9 @@ public class Card extends BaseModel {
 
     @Column(name = "card_order", nullable = false)
     private int order;
+
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
 
     @ManyToOne
     @JoinColumn(name = "column_id", nullable = false)

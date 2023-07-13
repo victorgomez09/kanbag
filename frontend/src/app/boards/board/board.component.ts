@@ -48,6 +48,7 @@ export class BoardComponent {
     this.boardService.findById(id).subscribe((result) => {
       if (result.success) {
         this.board = result.data;
+        console.log('result.data', result.data);
 
         $columns.next(result.data.columns);
       }
@@ -105,5 +106,16 @@ export class BoardComponent {
 
   setSelectedCard(event: Card): void {
     this.selectedCard = event;
+  }
+
+  updateCardPriority(newPriority: "LOW" | "MEDIUM" | "HIGH") {
+    if (this.selectedCard?.priority !== newPriority) {
+      this.boardService.updateCard({ ...this.selectedCard!, priority: newPriority }).subscribe(response => {
+        console.log('response', response)
+        if (response.success) {
+          this.selectedCard = response.data;
+        }
+      })
+    }
   }
 }

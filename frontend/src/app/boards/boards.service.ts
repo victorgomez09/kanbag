@@ -98,6 +98,20 @@ export class BoardsService {
     );
   }
 
+  updateCard(data: Card): Observable<ApiResponse<Card>> {
+    return this.http.put<ApiResponse<Card>>(
+      `${environment.apiUrl}/cards/${data.id}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(
+            environment.tokenStorageKey
+          )}`,
+        },
+      }
+    );
+  }
+
   updateCardsOrder(data: Card[]): Observable<ApiResponse<Card[]>> {
     return this.http.put<ApiResponse<Card[]>>(
       `${environment.apiUrl}/cards/updateOrder`,

@@ -18,4 +18,6 @@ public class CardDto {
     private int order;
 
     private Long columnId;
+
+    private String priority;
 }

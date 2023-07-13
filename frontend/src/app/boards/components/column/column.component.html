@@ -6,51 +6,28 @@
     </div>
   </div>
 
-  <div
-    class="tasks p-2 overflow-y-auto"
-    style="min-height: 2em"
-    cdkDropList
-    cdkDropListOrientation="vertical"
-    [cdkDropListData]="column.cards"
-    (cdkDropListDropped)="drop($event)"
-    [id]="column.id.toString()"
-  >
-    <div
-      class="card bg-base-200 shadow mt-1 mb-1 hover:cursor-pointer"
-      cdkDrag
-      *ngFor="let task of cards | async"
-    >
-      <!-- <mat-card [ngClass]="task.label"> {{ task.description }} </mat-card> -->
-      <div
-        class="card-body p-4 truncate block"
-        (dblclick)="setSelectedCard(task)"
-        ondblclick="cardModal.showModal()"
-      >
+  <div class="tasks p-2 overflow-y-auto" style="min-height: 2em" cdkDropList cdkDropListOrientation="vertical"
+    [cdkDropListData]="column.cards" (cdkDropListDropped)="drop($event)" [id]="column.id.toString()">
+    <div class="card bg-base-200 shadow mt-1 mb-1 border-s-2 hover:cursor-pointer" cdkDrag
+      *ngFor="let task of cards | async" [ngClass]="{'border-s-success': task.priority === 'LOW', 
+        'border-s-warning': task.priority === 'MEDIUM', 
+        'border-s-error': task.priority === 'HIGH'}">
+      <div class="card-body p-4 truncate block" (dblclick)="setSelectedCard(task)" ondblclick="cardModal.showModal()">
         {{ task.title }}
       </div>
 
       <!-- You can open the modal using ID.showModal() method -->
     </div>
   </div>
-  <button
-    class="btn"
-    (click)="addNewCardHandler()"
-    *ngIf="!addNewCardToggle; else addNewCardForm"
-  >
+  <button class="btn" (click)="addNewCardHandler()" *ngIf="!addNewCardToggle; else addNewCardForm">
     +
   </button>
   <ng-template #addNewCardForm>
     <div class="p-2">
-      <input
-        type="text"
-        placeholder="Card name"
-        class="input input-bordered w-full"
-        [formControl]="nameFormControl"
-        (keydown.enter)="addNewCard()"
-        [ngClass]="{
+      <input type="text" placeholder="Card name" class="input input-bordered w-full" [formControl]="nameFormControl"
+        (keydown.enter)="addNewCard()" [ngClass]="{
           'input-error': nameFormControl.touched && nameFormControl.errors
-        }"
-      />
+        }" />
     </div>
   </ng-template>
 </div>

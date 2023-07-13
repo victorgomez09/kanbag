@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,14 +41,29 @@ public class CardController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponseDto<CardDto>> update(@PathVariable Long id, @RequestBody CardDto data) {
+        try {
+            return ResponseEntity.ok()
+                    .body(new ApiResponseDto<>(true, "Update card",
+                            mapper.map(service.update(id, mapper.map(data, Card.class)), CardDto.class)));
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PutMapping("updateOrder")
     public ResponseEntity<ApiResponseDto<List<CardDto>>> updateOrder(@RequestBody List<CardDto> data) {
         try {
             return ResponseEntity.ok()
                     .body(new ApiResponseDto<>(true, "Update card order",
-                            service.updateOrder(data.stream().map(card -> mapper.map(card, Card.class))
+                            service.updateOrder(data.stream()
+                                    .map(card -> mapper.map(card, Card.class))
                                     .collect(Collectors.toList()))
-                                    .stream().map(entity -> mapper.map(entity, CardDto.class))
+                                    .stream()
+                                    .map(entity -> mapper.map(entity,
+                                            CardDto.class))
                                     .collect(Collectors.toList())));
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
@@ -62,11 +78,17 @@ public class CardController {
             return ResponseEntity.ok()
                     .body(new ApiResponseDto<>(true, "Update card order and column",
                             service.updateOrderAndColumn(
-                                    data.getPrevColumn().stream().map(card -> mapper.map(card, Card.class))
+                                    data.getPrevColumn().stream()
+                                            .map(card -> mapper.map(card,
+                                                    Card.class))
                                             .collect(Collectors.toList()),
-                                    data.getCurrentColumn().stream().map(card -> mapper.map(card, Card.class))
+                                    data.getCurrentColumn().stream()
+                                            .map(card -> mapper.map(card,
+                                                    Card.class))
                                             .collect(Collectors.toList()))
-                                    .stream().map(entity -> mapper.map(entity, CardDto.class))
+                                    .stream()
+                                    .map(entity -> mapper.map(entity,
+                                            CardDto.class))
                                     .collect(Collectors.toList())));
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),

@@ -1,59 +1,28 @@
-<div
-  class="flex-1 px-4 py-2 bg-base-200 overflow-y-hidden"
-  *ngIf="board; else loading"
->
+<div class="flex-1 px-4 py-2 bg-base-200 overflow-y-hidden" *ngIf="board; else loading">
   <h2 class="text-2xl">{{ board.name }}</h2>
 
-  <div
-    class="flex gap-2 mt-4 h-full columns"
-    style="max-height: calc(100vh - 10em)"
-    cdkDropList
-    cdkDropListOrientation="horizontal"
-    (cdkDropListDropped)="drop($event)"
-    cdkDropListGroup
-  >
-    <app-column
-      cdkDrag
-      *ngFor="let column of columns | async"
-      [column]="column"
-      (newItemEvent)="setSelectedCard($event)"
-    >
+  <div class="flex gap-2 mt-4 h-full columns" style="max-height: calc(100vh - 10em)" cdkDropList
+    cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)" cdkDropListGroup>
+    <app-column cdkDrag *ngFor="let column of columns | async" [column]="column"
+      (newItemEvent)="setSelectedCard($event)">
     </app-column>
 
     <div class="flex flex-col">
-      <button
-        class="btn btn-active w-32"
-        (click)="showCreateColumnInputHandler()"
-        cdkDragDisabled
-        *ngIf="!showCreateColumnInput; else showCreateInput"
-      >
+      <button class="btn btn-active w-32" (click)="showCreateColumnInputHandler()" cdkDragDisabled
+        *ngIf="!showCreateColumnInput; else showCreateInput">
         New column
       </button>
 
       <ng-template #showCreateInput>
-        <input
-          type="text"
-          placeholder="Column name"
-          class="input input-bordered"
-          [formControl]="nameFormControl"
+        <input type="text" placeholder="Column name" class="input input-bordered" [formControl]="nameFormControl"
           [ngClass]="{
             'input-error': nameFormControl.touched && nameFormControl.errors
-          }"
-        />
-        <label
-          class="label"
-          *ngIf="nameFormControl.touched && nameFormControl.errors"
-        >
-          <span class="label-text-alt italic text-error"
-            >Column name is required</span
-          >
+          }" />
+        <label class="label" *ngIf="nameFormControl.touched && nameFormControl.errors">
+          <span class="label-text-alt italic text-error">Column name is required</span>
         </label>
-        <button
-          type="button"
-          class="btn btn-sm btn-primary mt-2"
-          (click)="createColumn()"
-          [disabled]="nameFormControl.invalid"
-        >
+        <button type="button" class="btn btn-sm btn-primary mt-2" (click)="createColumn()"
+          [disabled]="nameFormControl.invalid">
           Create
         </button>
       </ng-template>
@@ -61,20 +30,34 @@
   </div>
 
   <dialog id="cardModal" class="modal">
-    <form method="dialog" class="modal-box">
+    <form method="dialog" class="modal-box w-11/12 h-4/6">
       <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
         ✕
       </button>
       <h3 class="font-bold text-lg">{{ selectedCard?.title }}</h3>
-      <div class="py-4">
-        <span class="font-semibold">Description</span>
-        <p class="italic font-thin">
-          {{
+      <div class="grid grid-cols-2 py-4">
+        <div>
+          <span class="font-semibold">Description</span>
+          <p class="italic font-thin">
+            {{
             !selectedCard?.description
-              ? "No description"
-              : selectedCard?.description
-          }}
-        </p>
+            ? "No description"
+            : selectedCard?.description
+            }}
+          </p>
+        </div>
+
+        <div class="flex flex-col">
+          <span class="font-semibold">Priority</span>
+          <div class="dropdown">
+            <label tabindex="0" class="btn m-1">{{selectedCard?.priority}}</label>
+            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+              <li class="text-success" (click)="updateCardPriority('LOW')"><a>LOW</a></li>
+              <li class="text-warning" (click)="updateCardPriority('MEDIUM')"><a>MEDIUM</a></li>
+              <li class="text-error" (click)="updateCardPriority('HIGH')"><a>HIGH</a></li>
+            </ul>
+          </div>
+        </div>
       </div>
     </form>
   </dialog>
