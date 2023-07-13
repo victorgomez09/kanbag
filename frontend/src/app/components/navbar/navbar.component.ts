@@ -9,11 +9,12 @@ import { Observable, Subscription, take } from 'rxjs';
 import { RouterModule } from '@angular/router';
 import { User } from 'src/app/auth/models/user.model';
 import { $user } from 'src/app/auth/store/user.store';
+import { ThemeSwitcherComponent } from '../theme-switcher/theme-switcher.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ThemeSwitcherComponent],
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent {

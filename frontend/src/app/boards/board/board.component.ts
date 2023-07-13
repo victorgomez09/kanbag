@@ -13,9 +13,9 @@ import { NavbarComponent } from 'src/app/components/navbar/navbar.component';
 import { BoardsService } from '../boards.service';
 import { ColumnComponent } from '../components/column/column.component';
 import { Board } from '../model/board.model';
+import { Card } from '../model/card.model';
 import { Column } from '../model/column.model';
 import { $columns } from '../store/columns.store';
-import { Card } from '../model/card.model';
 
 @Component({
   selector: 'app-board',
@@ -36,9 +36,11 @@ export class BoardComponent {
   private boardService: BoardsService = inject(BoardsService);
 
   public nameFormControl: FormControl;
+  public descriptionFormControl: FormControl;
   public board!: Board;
   public columns: Observable<Column[]>;
   public showCreateColumnInput: boolean;
+  public showDescriptionInput: boolean;
   public selectedCard?: Card;
   public error: boolean;
 
@@ -48,7 +50,6 @@ export class BoardComponent {
     this.boardService.findById(id).subscribe((result) => {
       if (result.success) {
         this.board = result.data;
-        console.log('result.data', result.data);
 
         $columns.next(result.data.columns);
       }
@@ -58,7 +59,11 @@ export class BoardComponent {
     this.nameFormControl = new FormControl('', {
       validators: [Validators.required],
     });
+    this.descriptionFormControl = new FormControl(this.selectedCard?.description, {
+      validators: [Validators.required],
+    });
     this.showCreateColumnInput = false;
+    this.showDescriptionInput = false;
     this.error = false;
   }
 
@@ -106,14 +111,38 @@ export class BoardComponent {
 
   setSelectedCard(event: Card): void {
     this.selectedCard = event;
+    this.descriptionFormControl.setValue(event.description);
   }
 
   updateCardPriority(newPriority: "LOW" | "MEDIUM" | "HIGH") {
     if (this.selectedCard?.priority !== newPriority) {
       this.boardService.updateCard({ ...this.selectedCard!, priority: newPriority }).subscribe(response => {
-        console.log('response', response)
         if (response.success) {
           this.selectedCard = response.data;
+          this.board.columns.map(column => {
+            const index = column.cards.findIndex(card => card.id === response.data.id);
+            column.cards[index] = response.data;
+          })
+        }
+      })
+    }
+  }
+
+  showDescriptionInputHandler() {
+    this.showDescriptionInput = !this.showDescriptionInput;
+  }
+
+  updateCardDescription() {
+    const newDescription = this.descriptionFormControl.value;
+    if (this.selectedCard?.description !== newDescription) {
+      this.boardService.updateCard({ ...this.selectedCard!, description: newDescription }).subscribe(response => {
+        if (response.success) {
+          this.selectedCard = response.data;
+          this.showDescriptionInputHandler();
+          this.board.columns.map(column => {
+            const index = column.cards.findIndex(card => card.id === response.data.id);
+            column.cards[index] = response.data;
+          })
         }
       })
     }

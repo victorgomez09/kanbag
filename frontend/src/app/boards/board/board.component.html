@@ -38,13 +38,24 @@
       <div class="grid grid-cols-2 py-4">
         <div>
           <span class="font-semibold">Description</span>
-          <p class="italic font-thin">
+          <p class="italic font-thin mt-4 hover:cursor-pointer"
+            *ngIf="!showDescriptionInput; else showDescriptionInputElse" (click)="showDescriptionInputHandler()">
             {{
             !selectedCard?.description
             ? "No description"
             : selectedCard?.description
             }}
           </p>
+          <ng-template #showDescriptionInputElse>
+            <div class="flex flex-col pt-2 pe-2">
+              <textarea class="textarea textarea-bordered w-full" placeholder="{{selectedCard?.description}}"
+                [formControl]="descriptionFormControl"></textarea>
+              <div class="self-end mt-2">
+                <button class="btn btn-sm btn-primary me-2" (click)="updateCardDescription()">Save</button>
+                <button class="btn btn-sm" (click)="showDescriptionInputHandler()">Cancel</button>
+              </div>
+            </div>
+          </ng-template>
         </div>
 
         <div class="flex flex-col">
