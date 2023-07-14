@@ -36,10 +36,12 @@ export class BoardComponent {
   private boardService: BoardsService = inject(BoardsService);
 
   public nameFormControl: FormControl;
+  public titleFormControl: FormControl;
   public descriptionFormControl: FormControl;
   public board!: Board;
   public columns: Observable<Column[]>;
   public showCreateColumnInput: boolean;
+  public showTitleInput: boolean;
   public showDescriptionInput: boolean;
   public selectedCard?: Card;
   public error: boolean;
@@ -59,10 +61,14 @@ export class BoardComponent {
     this.nameFormControl = new FormControl('', {
       validators: [Validators.required],
     });
+    this.titleFormControl = new FormControl(this.selectedCard?.title, {
+      validators: [Validators.required],
+    });
     this.descriptionFormControl = new FormControl(this.selectedCard?.description, {
       validators: [Validators.required],
     });
     this.showCreateColumnInput = false;
+    this.showTitleInput = false;
     this.showDescriptionInput = false;
     this.error = false;
   }
@@ -111,6 +117,7 @@ export class BoardComponent {
 
   setSelectedCard(event: Card): void {
     this.selectedCard = event;
+    this.titleFormControl.setValue(event.title);
     this.descriptionFormControl.setValue(event.description);
   }
 
@@ -128,11 +135,40 @@ export class BoardComponent {
     }
   }
 
-  showDescriptionInputHandler() {
+  deleteColumn(id: number) {
+    this.boardService.deleteColumn(id).subscribe(result => {
+      if (result.success) {
+        const index = this.board.columns.findIndex(column => column.id === id);
+        this.board.columns.splice(index, 1);
+      }
+    })
+  }
+
+  showTitleInputHandler(): void {
+    this.showTitleInput = !this.showTitleInput;
+  }
+
+  showDescriptionInputHandler(): void {
     this.showDescriptionInput = !this.showDescriptionInput;
   }
 
-  updateCardDescription() {
+  updateCardTitle(): void {
+    const newTitle = this.titleFormControl.value;
+    if (this.selectedCard?.title !== newTitle) {
+      this.boardService.updateCard({ ...this.selectedCard!, title: newTitle }).subscribe(response => {
+        if (response.success) {
+          this.selectedCard = response.data;
+          this.board.columns.map(column => {
+            const index = column.cards.findIndex(card => card.id === response.data.id);
+            column.cards[index] = response.data;
+          })
+          this.showTitleInputHandler();
+        }
+      })
+    }
+  }
+
+  updateCardDescription(): void {
     const newDescription = this.descriptionFormControl.value;
     if (this.selectedCard?.description !== newDescription) {
       this.boardService.updateCard({ ...this.selectedCard!, description: newDescription }).subscribe(response => {

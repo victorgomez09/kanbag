@@ -1,9 +1,13 @@
 <div class="card w-60 shadow max-h-full bg-base-100">
   <div class="card-body p-4 hover:cursor-pointer" cdkDragHandle>
-    <div class="card-title">
-      {{ column.name }}
+    <div class="card-title items-center justify-between" *ngIf="!showNameInput; else showNameInputElse">
+      <span class="hover:cursor-pointer" (click)="showNameInputHandler()">{{ column.name }}</span>
       <ng-content></ng-content>
     </div>
+    <ng-template #showNameInputElse>
+      <input type="text" class="input input-sm input-bordered" [formControl]="nameFormControl"
+        (keydown.enter)="updateColumnName()" (keydown.escape)="showNameInputHandler()" />
+    </ng-template>
   </div>
 
   <div class="tasks p-2 overflow-y-auto" style="min-height: 2em" cdkDropList cdkDropListOrientation="vertical"
@@ -35,9 +39,9 @@
   </span>
   <ng-template #addNewCardForm>
     <div class="p-2">
-      <input type="text" placeholder="Card name" class="input input-bordered w-full" [formControl]="nameFormControl"
+      <input type="text" placeholder="Card name" class="input input-bordered w-full" [formControl]="cardFormControl"
         (keydown.enter)="addNewCard()" (keydown.escape)="addNewCardToggle = false" [ngClass]="{
-          'input-error': nameFormControl.touched && nameFormControl.errors
+          'input-error': cardFormControl.touched && cardFormControl.errors
         }" />
     </div>
   </ng-template>

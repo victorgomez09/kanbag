@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +41,18 @@ public class ColumnController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponseDto<ColumnDto>> update(@PathVariable Long id, @RequestBody ColumnDto data) {
+        try {
+            return ResponseEntity.ok()
+                    .body(new ApiResponseDto<>(true, "Update column",
+                            mapper.map(service.update(id, mapper.map(data, Column.class)), ColumnDto.class)));
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PutMapping("updateOrder")
     public ResponseEntity<ApiResponseDto<List<ColumnDto>>> updateOrder(@RequestBody List<ColumnDto> data) {
         try {
@@ -48,6 +62,19 @@ public class ColumnController {
                                     .collect(Collectors.toList()))
                                     .stream().map(entity -> mapper.map(entity, ColumnDto.class))
                                     .collect(Collectors.toList())));
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponseDto<Void>> delete(@PathVariable Long id) {
+        try {
+            service.delete(id);
+
+            return ResponseEntity.ok()
+                    .body(new ApiResponseDto<>(true, "Delete column", null));
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
                     HttpStatus.BAD_REQUEST);

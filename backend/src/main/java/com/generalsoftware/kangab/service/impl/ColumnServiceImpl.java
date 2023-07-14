@@ -38,11 +38,14 @@ public class ColumnServiceImpl implements ColumnService {
     }
 
     @Override
-    public Column update(Column data) {
+    public Column update(Long id, Column data) {
         Column column = repository.findById(data.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Column", "id", data.getId()));
+        column.setName(data.getName());
+        column.setCards(new ArrayList<>(column.getCards()));
 
-        return repository.save(column.toBuilder().name(data.getName()).build());
+        return repository
+                .save(column);
     }
 
     @Override
@@ -58,6 +61,14 @@ public class ColumnServiceImpl implements ColumnService {
         });
 
         return result;
+    }
+
+    @Override
+    public void delete(Long id) {
+        Column column = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Column", "id", id));
+
+        repository.delete(column);
     }
 
 }

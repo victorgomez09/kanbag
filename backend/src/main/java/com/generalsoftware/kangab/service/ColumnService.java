@@ -10,8 +10,10 @@ public interface ColumnService {
 
     Column create(Long boardId, Column data);
 
-    Column update(Column data);
+    Column update(Long id, Column data);
 
     List<Column> updateOrder(List<Column> data);
+
+    void delete(Long id);
 
 }

@@ -30,7 +30,9 @@ export class ColumnComponent implements OnInit {
   @Input() column!: Column;
   @Output() newItemEvent = new EventEmitter<Card>();
   public nameFormControl: FormControl;
+  public cardFormControl: FormControl;
   public cards: Observable<Card[]>;
+  public showNameInput: boolean;
   public addNewCardToggle: boolean;
   public error: boolean;
 
@@ -38,8 +40,12 @@ export class ColumnComponent implements OnInit {
   private $cards = new BehaviorSubject<Card[]>([]);
 
   constructor() {
+    this.showNameInput = false;
     this.addNewCardToggle = false;
     this.nameFormControl = new FormControl('', {
+      validators: Validators.required
+    })
+    this.cardFormControl = new FormControl('', {
       validators: [Validators.required],
     });
     this.cards = this.$cards.asObservable();
@@ -48,6 +54,7 @@ export class ColumnComponent implements OnInit {
 
   ngOnInit(): void {
     this.$cards.next(this.column.cards!);
+    this.nameFormControl.setValue(this.column.name);
   }
 
   drop(event: CdkDragDrop<Card[]>) {
@@ -104,15 +111,31 @@ export class ColumnComponent implements OnInit {
     }
   }
 
+  showNameInputHandler(): void {
+    this.showNameInput = !this.showNameInput;
+  }
+
   addNewCardHandler(): void {
     this.addNewCardToggle = true;
+  }
+
+  updateColumnName(): void {
+    const newName = this.nameFormControl.value;
+    if (this.column.name !== newName) {
+      this.boardService.updateColumn({ ...this.column, name: newName }).subscribe(result => {
+        if (result.success) {
+          this.column = result.data;
+          this.showNameInputHandler();
+        }
+      })
+    }
   }
 
   addNewCard() {
     this.boardService
       .createCard({
         columnId: this.column.id!,
-        title: this.nameFormControl.value,
+        title: this.cardFormControl.value,
       })
       .subscribe((response) => {
         if (response.success) {
@@ -123,7 +146,7 @@ export class ColumnComponent implements OnInit {
               const newArray = [...oldArray, response.data];
               this.$cards.next(newArray);
             }
-            this.nameFormControl.reset();
+            this.cardFormControl.reset();
             this.addNewCardToggle = false;
           });
         }

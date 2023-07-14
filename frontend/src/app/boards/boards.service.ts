@@ -70,6 +70,33 @@ export class BoardsService {
     );
   }
 
+  updateColumn(data: Column): Observable<ApiResponse<Column>> {
+    return this.http.put<ApiResponse<Column>>(
+      `${environment.apiUrl}/columns/${data.id}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(
+            environment.tokenStorageKey
+          )}`,
+        },
+      }
+    );
+  }
+
+  deleteColumn(id: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(
+      `${environment.apiUrl}/columns/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(
+            environment.tokenStorageKey
+          )}`,
+        },
+      }
+    );
+  }
+
   updateColumnsOrder(data: Column[]): Observable<ApiResponse<Column[]>> {
     return this.http.put<ApiResponse<Column[]>>(
       `${environment.apiUrl}/columns/updateOrder`,
