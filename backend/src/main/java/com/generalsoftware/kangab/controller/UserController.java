@@ -1,5 +1,8 @@
 package com.generalsoftware.kangab.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +23,13 @@ public class UserController {
 
     private UserService userService;
     private ModelMapper mapper;
+
+    @GetMapping
+    public ResponseEntity<ApiResponseDto<List<UserDto>>> findAll() {
+        return ResponseEntity.ok()
+                .body(new ApiResponseDto<>(true, "Get all users", userService.findAllUsers().stream()
+                        .map(user -> mapper.map(user, UserDto.class)).collect(Collectors.toList())));
+    }
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponseDto<UserDto>> findMe(@CurrentUser String userEmail) {

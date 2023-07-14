@@ -36,4 +36,14 @@ export class AuthService {
       },
     });
   }
+
+  getAll(): Observable<ApiResponse<User[]>> {
+    return this.http.get<ApiResponse<User[]>>(`${environment.apiUrl}/users`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(
+          environment.tokenStorageKey
+        )}`,
+      },
+    });
+  }
 }

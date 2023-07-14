@@ -7,7 +7,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, take } from 'rxjs';
 import { NavbarComponent } from 'src/app/components/navbar/navbar.component';
 import { BoardsService } from '../boards.service';
@@ -16,6 +16,9 @@ import { Board } from '../model/board.model';
 import { Card } from '../model/card.model';
 import { Column } from '../model/column.model';
 import { $columns } from '../store/columns.store';
+import { User } from 'src/app/auth/models/user.model';
+import { $members, $user, $usersAll } from 'src/app/auth/store/user.store';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-board',
@@ -33,12 +36,16 @@ import { $columns } from '../store/columns.store';
 })
 export class BoardComponent {
   private route: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
   private boardService: BoardsService = inject(BoardsService);
+  private usersService: AuthService = inject(AuthService);
 
   public nameFormControl: FormControl;
   public titleFormControl: FormControl;
   public descriptionFormControl: FormControl;
   public board!: Board;
+  public allUsers: Observable<User[]>;
+  public members: Observable<User[]>;
   public columns: Observable<Column[]>;
   public showCreateColumnInput: boolean;
   public showTitleInput: boolean;
@@ -53,9 +60,16 @@ export class BoardComponent {
       if (result.success) {
         this.board = result.data;
 
+        $user.subscribe(user => {
+          if (!result.data.members.includes(user)) this.router.navigate(["/boards"])
+        })
+
+        $members.next(result.data.members);
         $columns.next(result.data.columns);
       }
     });
+    this.allUsers = $usersAll.asObservable();
+    this.members = $members.asObservable();
     this.columns = $columns.asObservable();
 
     this.nameFormControl = new FormControl('', {
@@ -71,6 +85,18 @@ export class BoardComponent {
     this.showTitleInput = false;
     this.showDescriptionInput = false;
     this.error = false;
+
+    this.usersService.getAll().subscribe(result => {
+      if (result.success) $usersAll.next(result.data);
+    })
+  }
+
+  getUserInitials(name: string): string {
+    return name.match(/(^\S\S?|\b\S)?/g)
+      ?.join('')
+      .match(/(^\S|\S$)?/g)
+      ?.join('')
+      .toUpperCase() || "";
   }
 
   showCreateColumnInputHandler(): void {
@@ -183,4 +209,18 @@ export class BoardComponent {
       })
     }
   }
+
+  manageBoardUsers(user: User) {
+    const index = this.board.members.findIndex(u => u.email === user.email);
+    if (index > -1) this.board.members.splice(index, 1);
+    else this.board.members.push(user);
+
+    this.boardService.manageBoardUsers(this.board.id, this.board.members.map(u => u.email)).subscribe(response => {
+      if (response.success) {
+        console.log('members', response.data.members)
+        $members.next(response.data.members);
+      }
+    });
+  }
+
 }

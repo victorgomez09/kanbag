@@ -15,9 +15,7 @@ public interface BoardService {
 
     Board update(Board data);
 
-    Board addUsers(Long id, AddRemoveUsersDto usersEmail);
-
-    Board removeUsers(Long id, AddRemoveUsersDto usersEmail);
+    Board manageUsers(Long id, List<String> usersEmail);
 
     void delete(Long id);
 }

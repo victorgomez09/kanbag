@@ -1,5 +1,6 @@
 package com.generalsoftware.kangab.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -60,31 +61,16 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board addUsers(Long id, AddRemoveUsersDto usersToAdd) {
+    public Board manageUsers(Long id, List<String> usersEmail) {
         Board board = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Board", "id", id));
 
-        usersToAdd.getUsers().stream().forEach(userEmail -> {
+        List<User> users = new ArrayList<>();
+        usersEmail.stream().forEach(userEmail -> {
             User user = userService.findUserByEmail(userEmail);
-            if (!board.getMembers().contains(user))
-                board.getMembers().add(user);
+            users.add(user);
         });
-
-        return repository.save(board);
-    }
-
-    @Override
-    public Board removeUsers(Long id, AddRemoveUsersDto usersToRemove) {
-        Board board = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Board", "id", id));
-
-        usersToRemove.getUsers().stream().forEach(userEmail -> {
-            User user = userService.findUserByEmail(userEmail);
-            if (board.getMembers().contains(user))
-                board.getMembers().remove(user);
-        });
-
-        board.getMembers().forEach(user -> System.out.println("user: " + user.getEmail()));
+        board.setMembers(new ArrayList<>(users));
 
         return repository.save(board);
     }

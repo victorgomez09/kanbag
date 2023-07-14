@@ -6,5 +6,6 @@ export interface Board {
   name: string;
   description: string;
   owner: User;
+  members: User[];
   columns: Column[]
 }

@@ -9,6 +9,7 @@ import { CreateColumn } from './model/create-column.model';
 import { Column } from './model/column.model';
 import { Card, UpdateCardOrder } from './model/card.model';
 import { CreateCard } from './model/create-card.model';
+import { User } from '../auth/models/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -42,6 +43,20 @@ export class BoardsService {
   createBoard(data: CreateBoard): Observable<ApiResponse<Board>> {
     return this.http.post<ApiResponse<Board>>(
       `${environment.apiUrl}/boards`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(
+            environment.tokenStorageKey
+          )}`,
+        },
+      }
+    );
+  }
+
+  manageBoardUsers(id: number, data: string[]): Observable<ApiResponse<Board>> {
+    return this.http.put<ApiResponse<Board>>(
+      `${environment.apiUrl}/boards/${id}/manageUsers`,
       data,
       {
         headers: {

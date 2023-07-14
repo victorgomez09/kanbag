@@ -21,6 +21,7 @@ import com.generalsoftware.kangab.dto.ApiResponseDto;
 import com.generalsoftware.kangab.dto.BoardCreateDto;
 import com.generalsoftware.kangab.dto.BoardDto;
 import com.generalsoftware.kangab.dto.BoardUpdateDto;
+import com.generalsoftware.kangab.dto.UserDto;
 import com.generalsoftware.kangab.dto.AddRemoveUsersDto;
 import com.generalsoftware.kangab.exception.ResourceAlreadyExistException;
 import com.generalsoftware.kangab.exception.ResourceNotFoundException;
@@ -72,24 +73,12 @@ public class BoardController {
         }
     }
 
-    @PatchMapping("/{id}/addUser")
+    @PutMapping("/{id}/manageUsers")
     public ResponseEntity<ApiResponseDto<BoardDto>> addUser(@PathVariable Long id,
-            @RequestBody AddRemoveUsersDto users) {
+            @RequestBody List<String> usersEmail) {
         try {
-            return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Added users to board",
-                    mapper.map(service.addUsers(id, users), BoardDto.class)));
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
-                    HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PatchMapping("/{id}/removeUser")
-    public ResponseEntity<ApiResponseDto<BoardDto>> removeUser(@PathVariable Long id,
-            @RequestBody AddRemoveUsersDto users) {
-        try {
-            return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Remove users from board",
-                    mapper.map(service.removeUsers(id, users), BoardDto.class)));
+            return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Manage board users",
+                    mapper.map(service.manageUsers(id, usersEmail), BoardDto.class)));
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
                     HttpStatus.BAD_REQUEST);
