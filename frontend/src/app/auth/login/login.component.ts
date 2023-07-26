@@ -32,12 +32,9 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    console.log('im in');
-
     this.service
       .signIn(this.loginForm.value as Required<typeof this.loginForm.value>)
       .subscribe((response) => {
-        console.log({ data: response });
         if (response.success) {
           localStorage.setItem(environment.tokenStorageKey, response.data);
           this.router.navigate(['/boards']);

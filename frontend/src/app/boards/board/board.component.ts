@@ -69,8 +69,6 @@ export class BoardComponent {
 
         $members.next(result.data.members);
         $columns.next(result.data.columns);
-
-        console.log('board', result.data);
       }
     });
     this.allUsers = $usersAll.asObservable();
@@ -247,7 +245,6 @@ export class BoardComponent {
       )
       .subscribe((response) => {
         if (response.success) {
-          console.log('members', response.data.members);
           $members.next(response.data.members);
         }
       });
@@ -259,7 +256,6 @@ export class BoardComponent {
     );
     if (index > -1) this.selectedCard!.users!.splice(index, 1);
     else this.selectedCard!.users!.push(user);
-    console.log(this.selectedCard!.users);
 
     this.boardService
       .manageCardUsers(

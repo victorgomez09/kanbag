@@ -61,7 +61,6 @@ export class RegisterComponent {
         this.registerForm.value as Required<typeof this.registerForm.value>
       )
       .subscribe((response) => {
-        console.log({ data: response });
         if (response.success) {
           this.router.navigate(['/signin']);
         }
