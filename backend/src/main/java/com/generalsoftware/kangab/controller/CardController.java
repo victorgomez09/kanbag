@@ -46,7 +46,8 @@ public class CardController {
         try {
             return ResponseEntity.ok()
                     .body(new ApiResponseDto<>(true, "Update card",
-                            mapper.map(service.update(id, mapper.map(data, Card.class)), CardDto.class)));
+                            mapper.map(service.update(id, mapper.map(data, Card.class)),
+                                    CardDto.class)));
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
                     HttpStatus.BAD_REQUEST);
@@ -90,6 +91,18 @@ public class CardController {
                                     .map(entity -> mapper.map(entity,
                                             CardDto.class))
                                     .collect(Collectors.toList())));
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/{id}/manageUsers")
+    public ResponseEntity<ApiResponseDto<CardDto>> manageUsers(@PathVariable Long id,
+            @RequestBody List<String> usersEmail) {
+        try {
+            return ResponseEntity.ok().body(new ApiResponseDto<>(true, "Manage card users",
+                    mapper.map(service.manageUsers(id, usersEmail), CardDto.class)));
         } catch (ResourceNotFoundException e) {
             return new ResponseEntity<>(new ApiResponseDto<>(false, e.getMessage(), null),
                     HttpStatus.BAD_REQUEST);

@@ -184,4 +184,18 @@ export class BoardsService {
       }
     );
   }
+
+  manageCardUsers(id: number, data: string[]): Observable<ApiResponse<Card>> {
+    return this.http.put<ApiResponse<Card>>(
+      `${environment.apiUrl}/cards/${id}/manageUsers`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(
+            environment.tokenStorageKey
+          )}`,
+        },
+      }
+    );
+  }
 }

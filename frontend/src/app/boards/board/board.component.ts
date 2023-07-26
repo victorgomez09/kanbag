@@ -19,6 +19,7 @@ import { $columns } from '../store/columns.store';
 import { User } from 'src/app/auth/models/user.model';
 import { $members, $user, $usersAll } from 'src/app/auth/store/user.store';
 import { AuthService } from 'src/app/auth/auth.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-board',
@@ -28,6 +29,7 @@ import { AuthService } from 'src/app/auth/auth.service';
     ReactiveFormsModule,
     DragDropModule,
     CdkDragPlaceholder,
+    MatIconModule,
     NavbarComponent,
     ColumnComponent,
   ],
@@ -60,12 +62,15 @@ export class BoardComponent {
       if (result.success) {
         this.board = result.data;
 
-        $user.subscribe(user => {
-          if (!result.data.members.includes(user)) this.router.navigate(["/boards"])
-        })
+        $user.subscribe((user) => {
+          if (!result.data.members.includes(user))
+            this.router.navigate(['/boards']);
+        });
 
         $members.next(result.data.members);
         $columns.next(result.data.columns);
+
+        console.log('board', result.data);
       }
     });
     this.allUsers = $usersAll.asObservable();
@@ -78,25 +83,31 @@ export class BoardComponent {
     this.titleFormControl = new FormControl(this.selectedCard?.title, {
       validators: [Validators.required],
     });
-    this.descriptionFormControl = new FormControl(this.selectedCard?.description, {
-      validators: [Validators.required],
-    });
+    this.descriptionFormControl = new FormControl(
+      this.selectedCard?.description,
+      {
+        validators: [Validators.required],
+      }
+    );
     this.showCreateColumnInput = false;
     this.showTitleInput = false;
     this.showDescriptionInput = false;
     this.error = false;
 
-    this.usersService.getAll().subscribe(result => {
+    this.usersService.getAll().subscribe((result) => {
       if (result.success) $usersAll.next(result.data);
-    })
+    });
   }
 
   getUserInitials(name: string): string {
-    return name.match(/(^\S\S?|\b\S)?/g)
-      ?.join('')
-      .match(/(^\S|\S$)?/g)
-      ?.join('')
-      .toUpperCase() || "";
+    return (
+      name
+        .match(/(^\S\S?|\b\S)?/g)
+        ?.join('')
+        .match(/(^\S|\S$)?/g)
+        ?.join('')
+        .toUpperCase() || ''
+    );
   }
 
   showCreateColumnInputHandler(): void {
@@ -147,27 +158,33 @@ export class BoardComponent {
     this.descriptionFormControl.setValue(event.description);
   }
 
-  updateCardPriority(newPriority: "LOW" | "MEDIUM" | "HIGH") {
+  updateCardPriority(newPriority: 'LOW' | 'MEDIUM' | 'HIGH') {
     if (this.selectedCard?.priority !== newPriority) {
-      this.boardService.updateCard({ ...this.selectedCard!, priority: newPriority }).subscribe(response => {
-        if (response.success) {
-          this.selectedCard = response.data;
-          this.board.columns.map(column => {
-            const index = column.cards.findIndex(card => card.id === response.data.id);
-            column.cards[index] = response.data;
-          })
-        }
-      })
+      this.boardService
+        .updateCard({ ...this.selectedCard!, priority: newPriority })
+        .subscribe((response) => {
+          if (response.success) {
+            this.selectedCard = response.data;
+            this.board.columns.map((column) => {
+              const index = column.cards.findIndex(
+                (card) => card.id === response.data.id
+              );
+              column.cards[index] = response.data;
+            });
+          }
+        });
     }
   }
 
   deleteColumn(id: number) {
-    this.boardService.deleteColumn(id).subscribe(result => {
+    this.boardService.deleteColumn(id).subscribe((result) => {
       if (result.success) {
-        const index = this.board.columns.findIndex(column => column.id === id);
+        const index = this.board.columns.findIndex(
+          (column) => column.id === id
+        );
         this.board.columns.splice(index, 1);
       }
-    })
+    });
   }
 
   showTitleInputHandler(): void {
@@ -181,46 +198,87 @@ export class BoardComponent {
   updateCardTitle(): void {
     const newTitle = this.titleFormControl.value;
     if (this.selectedCard?.title !== newTitle) {
-      this.boardService.updateCard({ ...this.selectedCard!, title: newTitle }).subscribe(response => {
-        if (response.success) {
-          this.selectedCard = response.data;
-          this.board.columns.map(column => {
-            const index = column.cards.findIndex(card => card.id === response.data.id);
-            column.cards[index] = response.data;
-          })
-          this.showTitleInputHandler();
-        }
-      })
+      this.boardService
+        .updateCard({ ...this.selectedCard!, title: newTitle })
+        .subscribe((response) => {
+          if (response.success) {
+            this.selectedCard = response.data;
+            this.board.columns.map((column) => {
+              const index = column.cards.findIndex(
+                (card) => card.id === response.data.id
+              );
+              column.cards[index] = response.data;
+            });
+            this.showTitleInputHandler();
+          }
+        });
     }
   }
 
   updateCardDescription(): void {
     const newDescription = this.descriptionFormControl.value;
     if (this.selectedCard?.description !== newDescription) {
-      this.boardService.updateCard({ ...this.selectedCard!, description: newDescription }).subscribe(response => {
-        if (response.success) {
-          this.selectedCard = response.data;
-          this.showDescriptionInputHandler();
-          this.board.columns.map(column => {
-            const index = column.cards.findIndex(card => card.id === response.data.id);
-            column.cards[index] = response.data;
-          })
-        }
-      })
+      this.boardService
+        .updateCard({ ...this.selectedCard!, description: newDescription })
+        .subscribe((response) => {
+          if (response.success) {
+            this.selectedCard = response.data;
+            this.showDescriptionInputHandler();
+            this.board.columns.map((column) => {
+              const index = column.cards.findIndex(
+                (card) => card.id === response.data.id
+              );
+              column.cards[index] = response.data;
+            });
+          }
+        });
     }
   }
 
   manageBoardUsers(user: User) {
-    const index = this.board.members.findIndex(u => u.email === user.email);
+    const index = this.board.members.findIndex((u) => u.email === user.email);
     if (index > -1) this.board.members.splice(index, 1);
     else this.board.members.push(user);
 
-    this.boardService.manageBoardUsers(this.board.id, this.board.members.map(u => u.email)).subscribe(response => {
-      if (response.success) {
-        console.log('members', response.data.members)
-        $members.next(response.data.members);
-      }
-    });
+    this.boardService
+      .manageBoardUsers(
+        this.board.id,
+        this.board.members.map((u) => u.email)
+      )
+      .subscribe((response) => {
+        if (response.success) {
+          console.log('members', response.data.members);
+          $members.next(response.data.members);
+        }
+      });
   }
 
+  manageCardUsers(user: User) {
+    const index = this.selectedCard!.users!.findIndex(
+      (u) => u.email === user.email
+    );
+    if (index > -1) this.selectedCard!.users!.splice(index, 1);
+    else this.selectedCard!.users!.push(user);
+    console.log(this.selectedCard!.users);
+
+    this.boardService
+      .manageCardUsers(
+        this.selectedCard!.id!,
+        this.selectedCard!.users!.map((user) => user.email)
+      )
+      .subscribe((response) => {
+        if (response.success) {
+          this.board.columns.map((column) => {
+            const index = column.cards.findIndex(
+              (card) => card.id === response.data.id
+            );
+            column.cards[index] = response.data;
+          });
+        }
+      });
+  }
+
+  userIn(user: User): boolean {
+    return this.selectedCard?.users?.some((u) => u !== user) || false;
+  }
 }

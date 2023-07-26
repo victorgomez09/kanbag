@@ -14,6 +14,7 @@ import {
   inject,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { BehaviorSubject, Observable, take } from 'rxjs';
 import { BoardsService } from '../../boards.service';
 import { Card } from '../../model/card.model';
@@ -22,7 +23,7 @@ import { Column } from '../../model/column.model';
 @Component({
   selector: 'app-column',
   standalone: true,
-  imports: [CommonModule, DragDropModule, ReactiveFormsModule],
+  imports: [CommonModule, DragDropModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './column.component.html',
   styleUrls: ['./column.component.scss'],
 })
@@ -43,8 +44,8 @@ export class ColumnComponent implements OnInit {
     this.showNameInput = false;
     this.addNewCardToggle = false;
     this.nameFormControl = new FormControl('', {
-      validators: Validators.required
-    })
+      validators: Validators.required,
+    });
     this.cardFormControl = new FormControl('', {
       validators: [Validators.required],
     });
@@ -122,12 +123,14 @@ export class ColumnComponent implements OnInit {
   updateColumnName(): void {
     const newName = this.nameFormControl.value;
     if (this.column.name !== newName) {
-      this.boardService.updateColumn({ ...this.column, name: newName }).subscribe(result => {
-        if (result.success) {
-          this.column = result.data;
-          this.showNameInputHandler();
-        }
-      })
+      this.boardService
+        .updateColumn({ ...this.column, name: newName })
+        .subscribe((result) => {
+          if (result.success) {
+            this.column = result.data;
+            this.showNameInputHandler();
+          }
+        });
     }
   }
 
@@ -155,5 +158,16 @@ export class ColumnComponent implements OnInit {
 
   setSelectedCard(card: Card): void {
     this.newItemEvent.emit(card);
+  }
+
+  getUserInitials(name: string): string {
+    return (
+      name
+        .match(/(^\S\S?|\b\S)?/g)
+        ?.join('')
+        .match(/(^\S|\S$)?/g)
+        ?.join('')
+        .toUpperCase() || ''
+    );
   }
 }

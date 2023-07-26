@@ -9,9 +9,11 @@ import com.generalsoftware.kangab.exception.ResourceNotFoundException;
 import com.generalsoftware.kangab.model.Card;
 import com.generalsoftware.kangab.model.Column;
 import com.generalsoftware.kangab.model.Priority;
+import com.generalsoftware.kangab.model.User;
 import com.generalsoftware.kangab.repository.CardRepository;
 import com.generalsoftware.kangab.service.CardService;
 import com.generalsoftware.kangab.service.ColumnService;
+import com.generalsoftware.kangab.service.UserService;
 
 import lombok.AllArgsConstructor;
 
@@ -21,6 +23,7 @@ public class CardServiceImpl implements CardService {
 
     private CardRepository repository;
     private ColumnService columnService;
+    private UserService userService;
 
     @Override
     public Card create(Long columnId, Card data) {
@@ -86,6 +89,21 @@ public class CardServiceImpl implements CardService {
         });
 
         return result;
+    }
+
+    @Override
+    public Card manageUsers(Long id, List<String> usersEmail) {
+        Card card = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Card", "id", id));
+
+        List<User> users = new ArrayList<>();
+        usersEmail.stream().forEach(userEmail -> {
+            User user = userService.findUserByEmail(userEmail);
+            users.add(user);
+        });
+        card.setUsers(new ArrayList<>(users));
+
+        return repository.save(card);
     }
 
 }

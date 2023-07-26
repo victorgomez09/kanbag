@@ -6,21 +6,29 @@ import { CreateBoard } from 'src/app/boards/model/create-board.model';
 import { BoardsService } from 'src/app/boards/boards.service';
 import { $boards } from 'src/app/boards/store/boards.store';
 import { Observable, Subscription, take } from 'rxjs';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { User } from 'src/app/auth/models/user.model';
 import { $user } from 'src/app/auth/store/user.store';
 import { ThemeSwitcherComponent } from '../theme-switcher/theme-switcher.component';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, ThemeSwitcherComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    ThemeSwitcherComponent,
+  ],
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent {
   @ViewChild('createBoardModal') private modal!: HTMLDialogElement;
   private fb: FormBuilder = inject(FormBuilder);
   private boardService: BoardsService = inject(BoardsService);
+  private authService: AuthService = inject(AuthService);
+  private router: Router = inject(Router);
 
   public boardForm: ModelFormGroup<CreateBoard>;
   public user: Observable<User>;
@@ -60,6 +68,18 @@ export class NavbarComponent {
           ).close();
         }
       });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    $user.next({
+      email: '',
+      displayName: '',
+      boards: [],
+      enabled: false,
+    });
+
+    this.router.navigate(['/']);
   }
 
   get f() {

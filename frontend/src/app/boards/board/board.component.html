@@ -1,17 +1,27 @@
-<div class="flex-1 px-4 py-2 bg-base-200 overflow-y-hidden" *ngIf="board; else loading">
+<div
+  class="flex-1 px-4 py-2 bg-base-200 overflow-y-hidden"
+  *ngIf="board; else loading"
+>
   <div class="flex items-center justify-between w-full">
     <h2 class="text-2xl">{{ board.name }}</h2>
     <div class="flex">
       <div class="avatar-group -space-x-6 !overflow-visible">
-        <div class="tooltip tooltip-left" [attr.data-tip]="user.email" *ngFor="let user of members | async">
+        <div
+          class="tooltip tooltip-left"
+          [attr.data-tip]="user.email"
+          *ngFor="let user of members | async"
+        >
           <div class="avatar placeholder">
             <div class="w-8 bg-neutral-focus text-neutral-content">
-              <span>{{getUserInitials(user.displayName)}}</span>
+              <span>{{ getUserInitials(user.displayName) }}</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="avatar-group hover:cursor-pointer" onclick="usersModal.showModal()">
+      <div
+        class="avatar-group hover:cursor-pointer"
+        onclick="usersModal.showModal()"
+      >
         <div class="avatar placeholder">
           <div class="w-8 bg-neutral-focus text-neutral-content">
             <span>+</span>
@@ -21,48 +31,92 @@
     </div>
   </div>
 
-  <div class="flex gap-2 mt-4 h-full columns" style="max-height: calc(100vh - 10em)" cdkDropList
-    cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)" cdkDropListGroup>
-    <app-column cdkDrag *ngFor="let column of columns | async" [column]="column"
-      (newItemEvent)="setSelectedCard($event)">
+  <div
+    class="flex gap-2 mt-4 h-full columns"
+    style="max-height: calc(100vh - 10em)"
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    (cdkDropListDropped)="drop($event)"
+    cdkDropListGroup
+  >
+    <app-column
+      cdkDrag
+      *ngFor="let column of columns | async"
+      [column]="column"
+      (newItemEvent)="setSelectedCard($event)"
+    >
       <div class="dropdown dropdown-bottom dropdown-end">
-        <svg tabindex="0" class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          tabindex="0"
+          class="w-5 h-5"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+          <g
+            id="SVGRepo_tracerCarrier"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></g>
           <g id="SVGRepo_iconCarrier">
             <path
               d="M14 5C14 6.10457 13.1046 7 12 7C10.8954 7 10 6.10457 10 5C10 3.89543 10.8954 3 12 3C13.1046 3 14 3.89543 14 5Z"
-              fill="#000000"></path>
+              fill="#000000"
+            ></path>
             <path
               d="M14 12C14 13.1046 13.1046 14 12 14C10.8954 14 10 13.1046 10 12C10 10.8954 10.8954 10 12 10C13.1046 10 14 10.8954 14 12Z"
-              fill="#000000"></path>
+              fill="#000000"
+            ></path>
             <path
               d="M12 21C13.1046 21 14 20.1046 14 19C14 17.8954 13.1046 17 12 17C10.8954 17 10 17.8954 10 19C10 20.1046 10.8954 21 12 21Z"
-              fill="#000000"></path>
+              fill="#000000"
+            ></path>
           </g>
         </svg>
-        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+        <ul
+          tabindex="0"
+          class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+        >
           <li (click)="deleteColumn(column.id)"><a>Delete</a></li>
         </ul>
       </div>
     </app-column>
 
     <div class="flex flex-col">
-      <button class="btn btn-active w-32" (click)="showCreateColumnInputHandler()" cdkDragDisabled
-        *ngIf="!showCreateColumnInput; else showCreateInput">
+      <button
+        class="btn btn-active w-32"
+        (click)="showCreateColumnInputHandler()"
+        cdkDragDisabled
+        *ngIf="!showCreateColumnInput; else showCreateInput"
+      >
         New column
       </button>
 
       <ng-template #showCreateInput>
-        <input type="text" placeholder="Column name" class="input input-bordered" [formControl]="nameFormControl"
+        <input
+          type="text"
+          placeholder="Column name"
+          class="input input-bordered"
+          [formControl]="nameFormControl"
           [ngClass]="{
             'input-error': nameFormControl.touched && nameFormControl.errors
-          }" />
-        <label class="label" *ngIf="nameFormControl.touched && nameFormControl.errors">
-          <span class="label-text-alt italic text-error">Column name is required</span>
+          }"
+        />
+        <label
+          class="label"
+          *ngIf="nameFormControl.touched && nameFormControl.errors"
+        >
+          <span class="label-text-alt italic text-error"
+            >Column name is required</span
+          >
         </label>
-        <button type="button" class="btn btn-sm btn-primary mt-2" (click)="createColumn()"
-          [disabled]="nameFormControl.invalid">
+        <button
+          type="button"
+          class="btn btn-sm btn-primary mt-2"
+          (click)="createColumn()"
+          [disabled]="nameFormControl.invalid"
+        >
           Create
         </button>
       </ng-template>
@@ -89,21 +143,29 @@
               <tr *ngFor="let user of allUsers | async">
                 <th>
                   <label>
-                    <input type="checkbox" class="checkbox"
-                      [checked]="(members | async)!.length && (members | async)!.indexOf(user)!"
-                      (change)="manageBoardUsers(user)" />
+                    <input
+                      type="checkbox"
+                      class="checkbox"
+                      [checked]="
+                        (members | async)!.length &&
+                        (members | async)!.indexOf(user)!
+                      "
+                      (change)="manageBoardUsers(user)"
+                    />
                   </label>
                 </th>
                 <td>
                   <div class="flex items-center space-x-3">
                     <div class="avatar placeholder">
-                      <div class="w-8 bg-neutral-focus rounded-full text-neutral-content">
-                        <span>{{getUserInitials(user.displayName)}}</span>
+                      <div
+                        class="w-8 bg-neutral-focus rounded-full text-neutral-content"
+                      >
+                        <span>{{ getUserInitials(user.displayName) }}</span>
                       </div>
                     </div>
                     <div>
-                      <div class="font-bold">{{user.displayName}}</div>
-                      <div class="text-sm opacity-50">{{user.email}}</div>
+                      <div class="font-bold">{{ user.displayName }}</div>
+                      <div class="text-sm opacity-50">{{ user.email }}</div>
                     </div>
                   </div>
                 </td>
@@ -124,32 +186,55 @@
       <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
         ✕
       </button>
-      <h3 class="font-bold text-lg hover:cursor-pointer" *ngIf="!showTitleInput; else showtitleInputElse"
-        (click)="showTitleInputHandler()">
-        {{selectedCard?.title }}
+      <h3
+        class="font-bold text-lg hover:cursor-pointer"
+        *ngIf="!showTitleInput; else showtitleInputElse"
+        (click)="showTitleInputHandler()"
+      >
+        {{ selectedCard?.title }}
       </h3>
       <ng-template #showtitleInputElse>
-        <input type="text" class="input input-sm input-bordered" [formControl]="titleFormControl"
-          (keydown.enter)="updateCardTitle()">
+        <input
+          type="text"
+          class="input input-sm input-bordered"
+          [formControl]="titleFormControl"
+          (keydown.enter)="updateCardTitle()"
+        />
       </ng-template>
       <div class="grid grid-cols-2 py-4">
         <div>
           <span class="font-semibold">Description</span>
-          <p class="italic font-thin mt-4 hover:cursor-pointer"
-            *ngIf="!showDescriptionInput; else showDescriptionInputElse" (click)="showDescriptionInputHandler()">
+          <p
+            class="italic font-thin mt-4 hover:cursor-pointer"
+            *ngIf="!showDescriptionInput; else showDescriptionInputElse"
+            (click)="showDescriptionInputHandler()"
+          >
             {{
-            !selectedCard?.description
-            ? "No description"
-            : selectedCard?.description
+              !selectedCard?.description
+                ? "No description"
+                : selectedCard?.description
             }}
           </p>
           <ng-template #showDescriptionInputElse>
             <div class="flex flex-col pt-2 pe-2">
-              <textarea class="textarea textarea-bordered w-full" placeholder="{{selectedCard?.description}}"
-                [formControl]="descriptionFormControl"></textarea>
+              <textarea
+                class="textarea textarea-bordered w-full"
+                placeholder="{{ selectedCard?.description }}"
+                [formControl]="descriptionFormControl"
+              ></textarea>
               <div class="self-end mt-2">
-                <button class="btn btn-sm btn-primary me-2" (click)="updateCardDescription()">Save</button>
-                <button class="btn btn-sm" (click)="showDescriptionInputHandler()">Cancel</button>
+                <button
+                  class="btn btn-sm btn-primary me-2"
+                  (click)="updateCardDescription()"
+                >
+                  Save
+                </button>
+                <button
+                  class="btn btn-sm"
+                  (click)="showDescriptionInputHandler()"
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </ng-template>
@@ -158,11 +243,70 @@
         <div class="flex flex-col">
           <span class="font-semibold">Priority</span>
           <div class="dropdown">
-            <label tabindex="0" class="btn m-1">{{selectedCard?.priority}}</label>
-            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-              <li class="text-success" (click)="updateCardPriority('LOW')"><a>LOW</a></li>
-              <li class="text-warning" (click)="updateCardPriority('MEDIUM')"><a>MEDIUM</a></li>
-              <li class="text-error" (click)="updateCardPriority('HIGH')"><a>HIGH</a></li>
+            <label tabindex="0" class="btn m-1">{{
+              selectedCard?.priority
+            }}</label>
+            <ul
+              tabindex="0"
+              class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li class="text-success" (click)="updateCardPriority('LOW')">
+                <a>LOW</a>
+              </li>
+              <li class="text-warning" (click)="updateCardPriority('MEDIUM')">
+                <a>MEDIUM</a>
+              </li>
+              <li class="text-error" (click)="updateCardPriority('HIGH')">
+                <a>HIGH</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flex flex-col">
+          <span class="font-semibold">Users</span>
+          <div class="dropdown">
+            <div class="flex flex-wrap avatar-group hover:cursor-pointer">
+              <div
+                class="tooltip"
+                [attr.data-tip]="user.email"
+                *ngFor="let user of selectedCard?.users"
+              >
+                <div class="avatar placeholder" (click)="manageCardUsers(user)">
+                  <div class="w-8 bg-neutral-focus text-neutral-content">
+                    <span>{{ getUserInitials(user.displayName) }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="avatar placeholder">
+                <div class="w-8 bg-neutral-focus text-neutral-content">
+                  <mat-icon tabindex="0" class="avatar-group m-1">add</mat-icon>
+                </div>
+              </div>
+            </div>
+            <ul
+              tabindex="0"
+              class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li
+                *ngFor="let user of allUsers | async"
+                (click)="manageCardUsers(user)"
+              >
+                <div
+                  class="avatar-group -space-x-6 !overflow-visible"
+                  *ngIf="!userIn(user)"
+                >
+                  <div class="tooltip" [attr.data-tip]="user.email">
+                    <div class="avatar placeholder">
+                      <div class="w-8 bg-neutral-focus text-neutral-content">
+                        <span>{{ getUserInitials(user?.displayName!) }}</span>
+                      </div>
+                    </div>
+                    <span class="ms-2">{{ user.displayName }}</span>
+                  </div>
+                </div>
+              </li>
             </ul>
           </div>
         </div>

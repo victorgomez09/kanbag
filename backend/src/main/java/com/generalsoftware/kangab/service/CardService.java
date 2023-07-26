@@ -13,4 +13,6 @@ public interface CardService {
     List<Card> updateOrder(List<Card> data);
 
     List<Card> updateOrderAndColumn(List<Card> prevData, List<Card> currentData);
+
+    Card manageUsers(Long id, List<String> usersEmail);
 }

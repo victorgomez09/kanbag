@@ -2,7 +2,6 @@ package com.generalsoftware.kangab.service;
 
 import java.util.List;
 
-import com.generalsoftware.kangab.dto.AddRemoveUsersDto;
 import com.generalsoftware.kangab.model.Board;
 
 public interface BoardService {

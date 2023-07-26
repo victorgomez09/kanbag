@@ -46,4 +46,8 @@ export class AuthService {
       },
     });
   }
+
+  logout(): void {
+    localStorage.removeItem(environment.tokenStorageKey);
+  }
 }
