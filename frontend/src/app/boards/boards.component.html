@@ -1,4 +1,4 @@
-<div class="flex-1 px-4 py-2 bg-base-200" *ngIf="user; else loading">
+<div class="flex-1 px-4 py-2" *ngIf="user; else loading">
   <span class="text-lg font-semibold">
     Welcome back, {{ user.displayName }}
   </span>
@@ -7,13 +7,13 @@
     <span>Your boards:</span>
 
     <div class="grid gap-4 mt-2" style="grid-template-columns: repeat(auto-fit, minmax(18em, 2fr))">
-      <div class="card bg-base-100 shadow hover:cursor-pointer hover:scale-105" *ngFor="let board of boards | async">
+      <div class="card shadow hover:cursor-pointer hover:scale-105" *ngFor="let board of boards | async">
         <div class="card-body p-4">
-          <h2 class="card-title">{{ board.name }}</h2>
+          <h2 class="card-header">{{ board.name }}</h2>
           <p class="italic font-thin">
             {{ !board.description ? "No description" : board.description }}
           </p>
-          <div class="card-actions justify-end">
+          <div class="card-footer justify-end">
             <button class="btn btn-sm btn-secondary" routerLink="/boards/{{ board.id }}">
               View
             </button>

@@ -20,6 +20,7 @@ import { User } from 'src/app/auth/models/user.model';
 import { $members, $user, $usersAll } from 'src/app/auth/store/user.store';
 import { AuthService } from 'src/app/auth/auth.service';
 import { MatIconModule } from '@angular/material/icon';
+import { TaskDetailsComponent } from '../components/task-details/task-details.component';
 
 @Component({
   selector: 'app-board',
@@ -32,6 +33,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule,
     NavbarComponent,
     ColumnComponent,
+    TaskDetailsComponent
   ],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss'],

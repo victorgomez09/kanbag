@@ -1,0 +1,22 @@
+<input class="modal-state" id="modal-1" type="checkbox" />
+<div class="modal">
+    <label class="modal-overlay" for="modal-1"></label>
+    <div class="modal-content flex flex-col gap-5">
+        <label for="modal-1" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+        <h2 class="text-xl" (click)="showTitleInputHandler()" *ngIf="showTitleInput; else showTitleInputElse">
+            {{card?.title}}
+        </h2>
+        <ng-template #showTitleInputElse>
+            <input type="text" class="input input-sm input-bordered" [formControl]="titleFormControl"
+                (keydown.enter)="updateCardTitle()" />
+        </ng-template>
+        <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur dolorum voluptate ratione dicta. Maxime
+            cupiditate, est commodi consectetur earum iure, optio, obcaecati in nulla saepe maiores nobis iste quasi
+            alias!</span>
+        <div class="flex gap-3">
+            <button class="btn btn-error btn-block">Delete</button>
+
+            <button class="btn btn-block">Cancel</button>
+        </div>
+    </div>
+</div>

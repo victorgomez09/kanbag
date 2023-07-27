@@ -1,10 +1,31 @@
+/** @type {import('rippleui').Config} */
+const config = {
+  themes: [
+    {
+      themeName: "light",
+      colors: {
+        discordIcon: "#6b64c3",
+      },
+    },
+    {
+      themeName: "dark",
+      colors: {
+        discordIcon: "#5841c3",
+      },
+    },
+  ],
+};
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class",
   content: ["./src/**/*.{html,ts}"],
   theme: {
     extend: {},
   },
-  plugins: [require("daisyui")],
+  plugins: [require("rippleui")({
+    ...config,
+  })],
   safelist: [
     'border-l-success',
     'border-l-warning',

@@ -1,9 +1,96 @@
-<div class="flex flex-1 items-center justify-center w-full h-full bg-base-200">
-  <div class="card w-96 bg-base-100 shadow">
+<div class="flex flex-1 items-center justify-center w-full h-full">
+  <div class="card w-96 shadow">
     <div class="card-body">
-      <h2 class="card-title self-center">Sign in</h2>
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <!-- Email input group -->
+      <div class="mx-auto flex w-full max-w-sm flex-col gap-6">
+        <div class="flex flex-col items-center">
+          <h1 class="text-3xl font-semibold">Sign Up</h1>
+          <p class="text-sm">Create new account to access</p>
+        </div>
+        <form class="form-group" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <div class="form-field">
+            <label class="form-label">Email address</label>
+
+            <input placeholder="Type here" type="email" class="input max-w-full" formControlName="email"
+              [ngClass]="{ 'input-error': f.email.errors && f.email.touched }" />
+            <label class="form-label" *ngIf="f.email.errors && f.email.touched">
+              <span class="form-label-alt italic text-error" *ngIf="f.email.errors['required']; else invalidEmail">
+                Email is required
+              </span>
+              <ng-template #invalidEmail>
+                <span class="form-label-alt italic text-error">
+                  Enter valid email
+                </span>
+              </ng-template>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Display name</label>
+
+            <input placeholder="Type here" type="text" class="input max-w-full" formControlName="displayName"
+              [ngClass]=" { 'input-error' : f.displayName.errors && f.displayName.touched }" />
+            <label class="form-label" *ngIf="f.displayName.errors && f.displayName.touched">
+              <span class="form-label-alt italic text-error" *ngIf="f.displayName.errors['required']">
+                Display name is required
+              </span>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Password</label>
+            <input placeholder="Type here" type="password" class="input max-w-full" formControlName="password"
+              [ngClass]="{ 'input-error': f.password.errors && f.password.touched }" />
+            <label class="form-label" *ngIf="f.password.errors && f.password.touched">
+              <span class="form-label-alt italic text-error">
+                Password is required
+              </span>
+
+              <span class="form-label-alt italic text-error" *ngIf="f.password.errors['minlength']">
+                Password required length is
+                {{ f.password.errors["minlength"].requiredLength }}
+              </span>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Confirm Password</label>
+            <input placeholder="Type here" type="password" class="input max-w-full" formControlName="matchingPassword"
+              [ngClass]="{ 'input-error': f.matchingPassword.errors && f.matchingPassword.touched }" />
+            <label class="form-label" *ngIf="f.matchingPassword.errors && f.matchingPassword.touched">
+              <span class="form-label-alt italic text-error" *ngIf="f.matchingPassword.errors['required']">
+                Confirm password is required
+              </span>
+
+              <span class="form-label-alt italic text-error" *ngIf="f.matchingPassword.errors['minlength']">
+                Confirm password required length is
+                {{ f.matchingPassword.errors["minlength"].requiredLength }}
+              </span>
+
+              <span class="form-label-alt italic text-error" *ngIf="
+                  f.matchingPassword.errors['matching'] &&
+                  !f.matchingPassword.errors['minlength']
+                ">
+                Passwords are not equals
+              </span>
+            </label>
+          </div>
+
+          <div class="form-field pt-5">
+            <div class="form-control justify-between">
+              <button type="submit" class="btn btn-primary w-full" [disabled]="registerForm.invalid">Sign up</button>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <div class="form-control justify-center">
+              <a class="link link-underline-hover link-primary text-sm" routerLink="/sign-in">Already have an account?
+                Sign in.</a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <div class="form-control w-full max-w-xs">
           <label class="label">
             <span class="label-text">Email</span>
@@ -30,7 +117,6 @@
           </label>
         </div>
 
-        <!-- Display name input group -->
         <div class="form-control w-full max-w-xs">
           <label class="label">
             <span class="label-text">name</span>
@@ -57,7 +143,6 @@
           </label>
         </div>
 
-        <!-- Password input group -->
         <div class="form-control w-full max-w-xs">
           <label class="label">
             <span class="label-text">Password</span>
@@ -156,7 +241,6 @@
           </label>
         </div>
 
-        <!-- Password input group -->
         <div class="form-control w-full max-w-xs">
           <label class="label">
             <span class="label-text">Confirm password</span>
@@ -281,7 +365,7 @@
             Enter
           </button>
         </div>
-      </form>
+      </form> -->
     </div>
   </div>
 </div>
