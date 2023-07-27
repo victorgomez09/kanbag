@@ -1,13 +1,50 @@
 <div class="flex-1 px-4 py-2" *ngIf="user; else loading">
-  <span class="text-lg font-semibold">
-    Welcome back, {{ user.displayName }}
-  </span>
+  <div class="flex justify-between">
+    <span class="text-lg font-semibold">
+      Welcome back, {{ (user | async)?.displayName }}
+    </span>
+
+    <label class="btn btn-primary" for="createBoardModal">New board</label>
+    <input class="modal-state" id="createBoardModal" type="checkbox" />
+    <div class="modal">
+      <label class="modal-overlay" for="createBoardModal"></label>
+      <div class="modal-content flex flex-col gap-5">
+        <label for="createBoardModal" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
+        <h2 class="text-xl">Create new board</h2>
+        <form [formGroup]="boardForm" (submit)="submit()">
+          <div class="form-group">
+            <div class="form-field">
+              <label class="form-label">Name</label>
+
+              <input placeholder="Type here" type="text" class="input max-w-full" formControlName="name"
+                [ngClass]="{'input-error' : f.name.touched && f.name.errors}" />
+              <label class="form-label" *ngIf="f.name.touched && f.name.errors">
+                <span class="form-label-alt text-error">Board name is required</span>
+              </label>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Description</label>
+              <div class="form-control">
+                <textarea placeholder="Type here" class="textarea max-w-full"></textarea>
+              </div>
+            </div>
+
+            <div class="form-field pt-5">
+              <div class="form-control justify-between">
+                <button type="submit" class="btn btn-primary w-full" [disabled]="boardForm.invalid">Create</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <div class="mt-10">
     <span>Your boards:</span>
 
     <div class="grid gap-4 mt-2" style="grid-template-columns: repeat(auto-fit, minmax(18em, 2fr))">
-      <div class="card shadow hover:cursor-pointer hover:scale-105" *ngFor="let board of boards | async">
+      <div class="card shadow hover:cursor-pointer hover:scale-105" *ngFor="let board of boards()">
         <div class="card-body p-4">
           <h2 class="card-header">{{ board.name }}</h2>
           <p class="italic font-thin">
@@ -27,6 +64,6 @@
 
 <ng-template #loading>
   <div class="flex items-center justify-center w-100 h-full overflow-hidden">
-    <span class="loading loading-spinner loading-lg"></span>
+    <div class="spinner-simple"></div>
   </div>
 </ng-template>

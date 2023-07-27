@@ -1,33 +1,56 @@
-import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { $user } from '../auth/store/user.store';
-import { User } from '../auth/models/user.model';
-import { NavbarComponent } from '../components/navbar/navbar.component';
-import { $boards } from './store/boards.store';
-import { Board } from './model/board.model';
-import { BoardsService } from './boards.service';
-import { Observable } from 'rxjs';
+import { Component, OnInit, WritableSignal, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { Observable } from 'rxjs';
+import { User } from '../auth/models/user.model';
+import { $user } from '../auth/store/user.store';
+import { NavbarComponent } from '../components/navbar/navbar.component';
+import { BoardsService } from './boards.service';
+import { Board } from './model/board.model';
+import { ModelFormGroup } from '../types';
+import { CreateBoard } from './model/create-board.model';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-boards',
   standalone: true,
-  imports: [CommonModule, RouterModule, NavbarComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, NavbarComponent],
   templateUrl: './boards.component.html',
   styleUrls: ['./boards.component.scss']
 })
-export class BoardsComponent {
+export class BoardsComponent implements OnInit {
   private boardService: BoardsService = inject(BoardsService);
+  private fb: FormBuilder = inject(FormBuilder);
 
-  public user!: User;
-  public boards: Observable<Board[]>;
+  public user: Observable<User>;
+  public boards: WritableSignal<Board[]> = signal([]);
+  public boardForm: ModelFormGroup<CreateBoard>;
 
   constructor() {
-    this.boardService.findByUser().subscribe((result) => {
-      if (result.success) $boards.next(result.data);
+    this.user = $user.asObservable();
+    this.boardForm = this.fb.nonNullable.group({
+      name: ['', Validators.required],
+      description: [''],
     });
+  }
 
-    $user.subscribe(result => this.user = result)
-    this.boards = $boards.asObservable();
+  ngOnInit(): void {
+    this.boardService.findByUser().subscribe((result) => {
+      if (result.success) this.boards.set(result.data);
+    });
+  }
+
+  submit() {
+    this.boardService
+      .createBoard(
+        this.boardForm.value as Required<typeof this.boardForm.value>
+      )
+      .subscribe((result) => {
+        if (result.success) this.boards.update(oldArray => [...oldArray, result.data])
+      });
+  }
+
+  get f() {
+    return this.boardForm.controls;
   }
 }

@@ -5,22 +5,22 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, take } from 'rxjs';
+import { Observable } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
+import { User } from 'src/app/auth/models/user.model';
+import { $members, $user, $usersAll } from 'src/app/auth/store/user.store';
 import { NavbarComponent } from 'src/app/components/navbar/navbar.component';
 import { BoardsService } from '../boards.service';
 import { ColumnComponent } from '../components/column/column.component';
+import { TaskDetailsComponent } from '../components/task-details/task-details.component';
 import { Board } from '../model/board.model';
 import { Card } from '../model/card.model';
 import { Column } from '../model/column.model';
-import { $columns } from '../store/columns.store';
-import { User } from 'src/app/auth/models/user.model';
-import { $members, $user, $usersAll } from 'src/app/auth/store/user.store';
-import { AuthService } from 'src/app/auth/auth.service';
-import { MatIconModule } from '@angular/material/icon';
-import { TaskDetailsComponent } from '../components/task-details/task-details.component';
+import { ColumnState } from '../store/columns.store';
 
 @Component({
   selector: 'app-board',
@@ -38,11 +38,12 @@ import { TaskDetailsComponent } from '../components/task-details/task-details.co
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss'],
 })
-export class BoardComponent {
+export class BoardComponent implements OnInit {
   private route: ActivatedRoute = inject(ActivatedRoute);
   private router: Router = inject(Router);
   private boardService: BoardsService = inject(BoardsService);
   private usersService: AuthService = inject(AuthService);
+  private columnState: ColumnState = inject(ColumnState);
 
   public nameFormControl: FormControl;
   public titleFormControl: FormControl;
@@ -50,7 +51,6 @@ export class BoardComponent {
   public board!: Board;
   public allUsers: Observable<User[]>;
   public members: Observable<User[]>;
-  public columns: Observable<Column[]>;
   public showCreateColumnInput: boolean;
   public showTitleInput: boolean;
   public showDescriptionInput: boolean;
@@ -58,24 +58,9 @@ export class BoardComponent {
   public error: boolean;
 
   constructor() {
-    const id = this.route.snapshot.paramMap.get('id')! as unknown as number;
-
-    this.boardService.findById(id).subscribe((result) => {
-      if (result.success) {
-        this.board = result.data;
-
-        $user.subscribe((user) => {
-          if (!result.data.members.includes(user))
-            this.router.navigate(['/boards']);
-        });
-
-        $members.next(result.data.members);
-        $columns.next(result.data.columns);
-      }
-    });
     this.allUsers = $usersAll.asObservable();
     this.members = $members.asObservable();
-    this.columns = $columns.asObservable();
+    // this.columns = $columns.asObservable();
 
     this.nameFormControl = new FormControl('', {
       validators: [Validators.required],
@@ -93,6 +78,22 @@ export class BoardComponent {
     this.showTitleInput = false;
     this.showDescriptionInput = false;
     this.error = false;
+  }
+
+  ngOnInit(): void {
+    this.boardService.findById(this.route.snapshot.paramMap.get('id')! as unknown as number).subscribe((result) => {
+      if (result.success) {
+        this.board = result.data;
+
+        $user.subscribe((user) => {
+          if (!result.data.members.some(u => u.email === user.email))
+            this.router.navigate(['/boards']);
+        });
+
+        $members.next(result.data.members);
+        this.columnState.setColumns(result.data.columns);
+      }
+    });
 
     this.usersService.getAll().subscribe((result) => {
       if (result.success) $usersAll.next(result.data);
@@ -122,12 +123,9 @@ export class BoardComponent {
       })
       .subscribe((result) => {
         if (result.success) {
-          $columns.pipe(take(1)).subscribe((oldArray) => {
-            const newArray = [...oldArray, result.data];
-            $columns.next(newArray);
-            this.nameFormControl.reset();
-            this.showCreateColumnInput = false;
-          });
+          this.columnState.updateColumns(result.data);
+          this.nameFormControl.reset();
+          this.showCreateColumnInput = false;
         }
       });
   }
@@ -158,24 +156,6 @@ export class BoardComponent {
     this.descriptionFormControl.setValue(event.description);
   }
 
-  updateCardPriority(newPriority: 'LOW' | 'MEDIUM' | 'HIGH') {
-    if (this.selectedCard?.priority !== newPriority) {
-      this.boardService
-        .updateCard({ ...this.selectedCard!, priority: newPriority })
-        .subscribe((response) => {
-          if (response.success) {
-            this.selectedCard = response.data;
-            this.board.columns.map((column) => {
-              const index = column.cards.findIndex(
-                (card) => card.id === response.data.id
-              );
-              column.cards[index] = response.data;
-            });
-          }
-        });
-    }
-  }
-
   deleteColumn(id: number) {
     this.boardService.deleteColumn(id).subscribe((result) => {
       if (result.success) {
@@ -185,54 +165,6 @@ export class BoardComponent {
         this.board.columns.splice(index, 1);
       }
     });
-  }
-
-  showTitleInputHandler(): void {
-    this.showTitleInput = !this.showTitleInput;
-  }
-
-  showDescriptionInputHandler(): void {
-    this.showDescriptionInput = !this.showDescriptionInput;
-  }
-
-  updateCardTitle(): void {
-    const newTitle = this.titleFormControl.value;
-    if (this.selectedCard?.title !== newTitle) {
-      this.boardService
-        .updateCard({ ...this.selectedCard!, title: newTitle })
-        .subscribe((response) => {
-          if (response.success) {
-            this.selectedCard = response.data;
-            this.board.columns.map((column) => {
-              const index = column.cards.findIndex(
-                (card) => card.id === response.data.id
-              );
-              column.cards[index] = response.data;
-            });
-            this.showTitleInputHandler();
-          }
-        });
-    }
-  }
-
-  updateCardDescription(): void {
-    const newDescription = this.descriptionFormControl.value;
-    if (this.selectedCard?.description !== newDescription) {
-      this.boardService
-        .updateCard({ ...this.selectedCard!, description: newDescription })
-        .subscribe((response) => {
-          if (response.success) {
-            this.selectedCard = response.data;
-            this.showDescriptionInputHandler();
-            this.board.columns.map((column) => {
-              const index = column.cards.findIndex(
-                (card) => card.id === response.data.id
-              );
-              column.cards[index] = response.data;
-            });
-          }
-        });
-    }
   }
 
   manageBoardUsers(user: User) {
@@ -252,31 +184,7 @@ export class BoardComponent {
       });
   }
 
-  manageCardUsers(user: User) {
-    const index = this.selectedCard!.users!.findIndex(
-      (u) => u.email === user.email
-    );
-    if (index > -1) this.selectedCard!.users!.splice(index, 1);
-    else this.selectedCard!.users!.push(user);
-
-    this.boardService
-      .manageCardUsers(
-        this.selectedCard!.id!,
-        this.selectedCard!.users!.map((user) => user.email)
-      )
-      .subscribe((response) => {
-        if (response.success) {
-          this.board.columns.map((column) => {
-            const index = column.cards.findIndex(
-              (card) => card.id === response.data.id
-            );
-            column.cards[index] = response.data;
-          });
-        }
-      });
-  }
-
-  userIn(user: User): boolean {
-    return this.selectedCard?.users?.some((u) => u !== user) || false;
+  get columns(): Column[] {
+    return this.columnState.getColumns();
   }
 }

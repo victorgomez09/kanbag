@@ -1,22 +1,92 @@
 <input class="modal-state" id="modal-1" type="checkbox" />
 <div class="modal">
     <label class="modal-overlay" for="modal-1"></label>
-    <div class="modal-content flex flex-col gap-5">
+    <div class="modal-content flex flex-col gap-5 h-screen w-screen">
         <label for="modal-1" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</label>
-        <h2 class="text-xl" (click)="showTitleInputHandler()" *ngIf="showTitleInput; else showTitleInputElse">
+        <h2 class="text-xl" (click)="showTitleInputHandler()" *ngIf="!showTitleInput; else showTitleInputElse">
             {{card?.title}}
         </h2>
         <ng-template #showTitleInputElse>
             <input type="text" class="input input-sm input-bordered" [formControl]="titleFormControl"
-                (keydown.enter)="updateCardTitle()" />
+                (keydown.enter)="updateCardTitle()" (keydown.escape)="showTitleInputHandler()" />
         </ng-template>
-        <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur dolorum voluptate ratione dicta. Maxime
-            cupiditate, est commodi consectetur earum iure, optio, obcaecati in nulla saepe maiores nobis iste quasi
-            alias!</span>
-        <div class="flex gap-3">
-            <button class="btn btn-error btn-block">Delete</button>
+        <div class="grid grid-cols-2 gap-4 py-2">
+            <div><span class="font-semibold">Description</span>
+                <p class="italic font-thin mt-4 hover:cursor-pointer"
+                    *ngIf="!showDescriptionInput; else showDescriptionInputElse"
+                    (click)="showDescriptionInputHandler()">
+                    {{
+                    !card?.description
+                    ? "No description"
+                    : card?.description
+                    }}
+                </p>
+                <ng-template #showDescriptionInputElse>
+                    <div class="flex flex-col pt-2 pe-2">
+                        <textarea class="textarea textarea-bordered w-full" placeholder="{{ card?.description }}"
+                            [formControl]="descriptionFormControl"></textarea>
+                        <div class="self-end mt-2">
+                            <button class="btn btn-sm btn-primary me-2" (click)="updateCardDescription()">
+                                Save
+                            </button>
+                            <button class="btn btn-sm" (click)="showDescriptionInputHandler()">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
 
-            <button class="btn btn-block">Cancel</button>
+            <div class="flex flex-col">
+                <span class="font-semibold">Priority</span>
+                <div class="dropdown">
+                    <label class="btn btn-solid-primary my-2" tabindex="0"
+                        [ngClass]="{'btn-solid-success': card?.priority === 'LOW', 'btn-solid-warning': card?.priority === 'MEDIUM', 'btn-solid-error': card?.priority === 'HIGH'}">{{card?.priority}}</label>
+                    <div class="dropdown-menu dropdown-menu-bottom-right shadow-sm">
+                        <a class="dropdown-item text-sm text-success" (click)="updateCardPriority('LOW')">LOW</a>
+                        <a tabindex="-1" class="dropdown-item text-sm text-warning"
+                            (click)="updateCardPriority('MEDIUM')">MEDIUM</a>
+                        <a tabindex="-1" class="dropdown-item text-sm text-error"
+                            (click)="updateCardPriority('HIGH')">HIGH</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col">
+                <span class="font-semibold">Users</span>
+                <div class="avatar-group !overflow-visible">
+                    <div class="tooltip tooltip-left" [attr.data-tooltip]="user.email" *ngFor="let user of card?.users">
+                        <div class="avatar">
+                            <span>{{ getUserInitials(user.displayName) }}</span>
+                        </div>
+                    </div>
+                    <div class="avatar hover:cursor-pointer">
+                        <div class="dropdown-container">
+                            <div class="dropdown">
+                                <label class="btn btn-ghost flex cursor-pointer px-0 hover:bg-inherit" tabindex="0">
+                                    <mat-icon>add</mat-icon>
+                                </label>
+                                <div class="dropdown-menu dropdown-menu-bottom-right">
+                                    <a class="dropdown-item text-sm" *ngFor="let user of allUsers | async">
+                                        {{!userIn(user)}}
+                                        <div *ngIf="!userIn(user)" (click)="manageCardUsers(user)">
+                                            <!-- <span class="tooltip tooltip-top" [attr.data-tooltip]="user.email"> -->
+                                            <div class="avatar">
+                                                <span>{{ getUserInitials(user?.displayName!) }}</span>
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span class="ms-2">{{ user.displayName }}</span>
+                                                <span class="ms-2">{{ user.email }}</span>
+                                            </div>
+                                        </div>
+                                        <!-- </span> -->
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

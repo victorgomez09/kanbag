@@ -18,6 +18,8 @@ export class AuthGuard {
     // check if the user is logged in
     if (localStorage.getItem(environment.tokenStorageKey)) {
       this.authService.getMe().subscribe((result) => {
+        console.log('getting user from database');
+
         if (result.success) $user.next(result.data);
       });
       return true;

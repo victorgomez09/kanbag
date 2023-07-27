@@ -24,22 +24,13 @@ import { AuthService } from 'src/app/auth/auth.service';
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent {
-  @ViewChild('createBoardModal') private modal!: HTMLDialogElement;
-  private fb: FormBuilder = inject(FormBuilder);
-  private boardService: BoardsService = inject(BoardsService);
   private authService: AuthService = inject(AuthService);
   private router: Router = inject(Router);
 
-  public boardForm: ModelFormGroup<CreateBoard>;
   public user: Observable<User>;
   public userInitials?: string;
 
   constructor() {
-    this.boardForm = this.fb.nonNullable.group({
-      name: ['', Validators.required],
-      description: [''],
-    });
-
     this.user = $user.asObservable();
     this.user.subscribe((user) => {
       this.userInitials = user.displayName
@@ -49,25 +40,6 @@ export class NavbarComponent {
         ?.join('')
         .toUpperCase();
     });
-  }
-
-  submit() {
-    this.boardService
-      .createBoard(
-        this.boardForm.value as Required<typeof this.boardForm.value>
-      )
-      .subscribe((result) => {
-        if (result.success) {
-          $boards.pipe(take(1)).subscribe((oldArray) => {
-            const newArray = [...oldArray, result.data];
-            $boards.next(newArray);
-          });
-
-          (
-            document.getElementById('createBoardModal') as HTMLDialogElement
-          ).close();
-        }
-      });
   }
 
   logout(): void {
@@ -82,7 +54,4 @@ export class NavbarComponent {
     this.router.navigate(['/']);
   }
 
-  get f() {
-    return this.boardForm.controls;
-  }
 }
