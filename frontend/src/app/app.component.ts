@@ -1,9 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { UserState } from './auth/store/user.store';
-import { User } from './auth/models/user.model';
+
+import { NavbarComponent } from './core/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +12,6 @@ import { User } from './auth/models/user.model';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  private userState: UserState = inject(UserState);
 
   public title = 'Kanbag';
 
@@ -23,9 +21,5 @@ export class AppComponent implements OnInit {
     } else {
       document.documentElement.setAttribute('data-theme', 'light');
     }
-  }
-
-  get user(): User {
-    return this.userState.getUser();
   }
 }

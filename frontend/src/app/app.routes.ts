@@ -1,28 +1,40 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from './auth/guards/auth.guard';
+
+import { AuthGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
     loadChildren: () =>
-      import('./landing/landing.routes').then((mod) => mod.LANDING_ROUTES),
+      import('./pages/landing/landing.routes').then((mod) => mod.LANDING_ROUTES),
   },
   {
     path: '',
     loadChildren: () =>
-      import('./auth/auth.routes').then((mod) => mod.AUTH_ROUTES),
+      import('./pages/register/register.routes').then((mod) => mod.REGISTER_ROUTES),
+  },
+  {
+    path: '',
+    loadChildren: () =>
+      import('./pages/login/login.routes').then((mod) => mod.LOGIN_ROUTES),
   },
   {
     path: 'boards',
     loadChildren: () =>
-      import('./boards/boards.routes').then((mod) => mod.BOARDS_ROUTES),
+      import('./pages/boards/boards.routes').then((mod) => mod.BOARDS_ROUTES),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'boards',
+    loadChildren: () =>
+      import('./pages/board/board.routes').then((mod) => mod.BOARD_ROUTES),
     canActivate: [AuthGuard],
   },
   {
     path: '**',
     pathMatch: 'full',
     loadChildren: () =>
-      import('./not-found/not-found.routes').then(
+      import('./pages/not-found/not-found.routes').then(
         (mod) => mod.NOT_FOUND_ROUTES
       ),
     canActivate: [AuthGuard],
