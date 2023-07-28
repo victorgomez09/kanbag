@@ -117,12 +117,13 @@ export class TaskDetailsComponent {
       )
       .subscribe((response) => {
         if (response.success) {
-          // this.board.columns.map((column) => {
-          //   const index = column.cards.findIndex(
-          //     (card) => card.id === response.data.id
-          //   );
-          //   column.cards[index] = response.data;
-          // });
+          this.columns.map((column) => {
+            const index = column.cards.findIndex(
+              (card) => card.id === response.data.id
+            );
+            column.cards[index] = response.data;
+            this.card!.users = response.data.users
+          });
         }
       });
   }

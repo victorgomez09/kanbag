@@ -55,7 +55,8 @@
             <div class="flex flex-col">
                 <span class="font-semibold">Users</span>
                 <div class="avatar-group !overflow-visible">
-                    <div class="tooltip tooltip-left" [attr.data-tooltip]="user.email" *ngFor="let user of card?.users">
+                    <div class="tooltip tooltip-right hover:cursor-pointer" [attr.data-tooltip]="user.email"
+                        *ngFor="let user of card?.users" (click)="manageCardUsers(user)">
                         <div class="avatar">
                             <span>{{ getUserInitials(user.displayName) }}</span>
                         </div>
@@ -68,19 +69,24 @@
                                 </label>
                                 <div class="dropdown-menu dropdown-menu-bottom-right">
                                     <a class="dropdown-item text-sm" *ngFor="let user of allUsers">
-                                        {{!userIn(user)}}
-                                        <div *ngIf="!userIn(user)" (click)="manageCardUsers(user)">
-                                            <!-- <span class="tooltip tooltip-top" [attr.data-tooltip]="user.email"> -->
-                                            <div class="avatar">
-                                                <span>{{ getUserInitials(user?.displayName!) }}</span>
-                                            </div>
-                                            <div class="flex flex-col">
-                                                <span class="ms-2">{{ user.displayName }}</span>
-                                                <span class="ms-2">{{ user.email }}</span>
+                                        <div *ngIf="!userIn(user); else showNoUsersLeftBlock"
+                                            (click)="manageCardUsers(user)">
+                                            <div class="flex items-center">
+                                                <div class="avatar">
+                                                    <span>{{ getUserInitials(user?.displayName!) }}</span>
+                                                </div>
+                                                <div class="flex flex-col">
+                                                    <span class="font-semibold ms-2">{{ user.displayName }}</span>
+                                                    <span class="ms-2">{{ user.email }}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <!-- </span> -->
                                     </a>
+                                    <ng-template #showNoUsersLeftBlock>
+                                        <a class="dropdown-item dropdown-active" tabindex="-1">
+                                            <span>No users left</span>
+                                        </a>
+                                    </ng-template>
                                 </div>
                             </div>
                         </div>
