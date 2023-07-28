@@ -3,7 +3,7 @@ import { Component, OnInit, WritableSignal, inject, signal } from '@angular/core
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 import { User } from '../auth/models/user.model';
-import { $user } from '../auth/store/user.store';
+import { UserState } from '../auth/store/user.store';
 import { NavbarComponent } from '../components/navbar/navbar.component';
 import { BoardsService } from './boards.service';
 import { Board } from './model/board.model';
@@ -19,15 +19,15 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
   styleUrls: ['./boards.component.scss']
 })
 export class BoardsComponent implements OnInit {
-  private boardService: BoardsService = inject(BoardsService);
-  private fb: FormBuilder = inject(FormBuilder);
 
-  public user: Observable<User>;
+  private fb: FormBuilder = inject(FormBuilder);
+  private boardService: BoardsService = inject(BoardsService);
+  private userState: UserState = inject(UserState);
+
   public boards: WritableSignal<Board[]> = signal([]);
   public boardForm: ModelFormGroup<CreateBoard>;
 
   constructor() {
-    this.user = $user.asObservable();
     this.boardForm = this.fb.nonNullable.group({
       name: ['', Validators.required],
       description: [''],
@@ -52,5 +52,9 @@ export class BoardsComponent implements OnInit {
 
   get f() {
     return this.boardForm.controls;
+  }
+
+  get user(): User {
+    return this.userState.getUser();
   }
 }

@@ -1,16 +1,17 @@
-import { Inject, Injectable, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
-  Router,
   ActivatedRouteSnapshot,
+  Router,
   RouterStateSnapshot,
 } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../auth.service';
-import { $user } from '../store/user.store';
+import { UserState } from '../store/user.store';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard {
   private authService: AuthService = inject(AuthService);
+  private userState: UserState = inject(UserState);
 
   constructor(private router: Router) { }
 
@@ -18,9 +19,7 @@ export class AuthGuard {
     // check if the user is logged in
     if (localStorage.getItem(environment.tokenStorageKey)) {
       this.authService.getMe().subscribe((result) => {
-        console.log('getting user from database');
-
-        if (result.success) $user.next(result.data);
+        if (result.success) this.userState.setUser(result.data);
       });
       return true;
     }

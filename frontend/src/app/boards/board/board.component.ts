@@ -5,14 +5,14 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, WritableSignal, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/auth/models/user.model';
-import { $members, $user, $usersAll } from 'src/app/auth/store/user.store';
+import { UserState } from 'src/app/auth/store/user.store';
 import { NavbarComponent } from 'src/app/components/navbar/navbar.component';
 import { BoardsService } from '../boards.service';
 import { ColumnComponent } from '../components/column/column.component';
@@ -39,18 +39,19 @@ import { ColumnState } from '../store/columns.store';
   styleUrls: ['./board.component.scss'],
 })
 export class BoardComponent implements OnInit {
+
   private route: ActivatedRoute = inject(ActivatedRoute);
   private router: Router = inject(Router);
   private boardService: BoardsService = inject(BoardsService);
   private usersService: AuthService = inject(AuthService);
   private columnState: ColumnState = inject(ColumnState);
+  private userState: UserState = inject(UserState);
 
   public nameFormControl: FormControl;
   public titleFormControl: FormControl;
   public descriptionFormControl: FormControl;
   public board!: Board;
-  public allUsers: Observable<User[]>;
-  public members: Observable<User[]>;
+  public members: WritableSignal<User[]>;
   public showCreateColumnInput: boolean;
   public showTitleInput: boolean;
   public showDescriptionInput: boolean;
@@ -58,10 +59,6 @@ export class BoardComponent implements OnInit {
   public error: boolean;
 
   constructor() {
-    this.allUsers = $usersAll.asObservable();
-    this.members = $members.asObservable();
-    // this.columns = $columns.asObservable();
-
     this.nameFormControl = new FormControl('', {
       validators: [Validators.required],
     });
@@ -74,6 +71,7 @@ export class BoardComponent implements OnInit {
         validators: [Validators.required],
       }
     );
+    this.members = signal([]);
     this.showCreateColumnInput = false;
     this.showTitleInput = false;
     this.showDescriptionInput = false;
@@ -85,18 +83,15 @@ export class BoardComponent implements OnInit {
       if (result.success) {
         this.board = result.data;
 
-        $user.subscribe((user) => {
-          if (!result.data.members.some(u => u.email === user.email))
-            this.router.navigate(['/boards']);
-        });
+        if (!result.data.members.some(u => u.email === this.user.email)) this.router.navigate(['/boards']);
 
-        $members.next(result.data.members);
+        this.members.set(result.data.members);
         this.columnState.setColumns(result.data.columns);
       }
     });
 
     this.usersService.getAll().subscribe((result) => {
-      if (result.success) $usersAll.next(result.data);
+      if (result.success) this.userState.setUsers(result.data);
     });
   }
 
@@ -179,12 +174,20 @@ export class BoardComponent implements OnInit {
       )
       .subscribe((response) => {
         if (response.success) {
-          $members.next(response.data.members);
+          this.members.set(response.data.members);
         }
       });
   }
 
+  get user(): User {
+    return this.userState.getUser();
+  }
+
   get columns(): Column[] {
     return this.columnState.getColumns();
+  }
+
+  get allUsers(): User[] {
+    return this.userState.getUsers();
   }
 }

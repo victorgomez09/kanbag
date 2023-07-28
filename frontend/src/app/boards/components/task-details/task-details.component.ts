@@ -3,7 +3,7 @@ import { Component, Input, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { User } from 'src/app/auth/models/user.model';
-import { $usersAll } from 'src/app/auth/store/user.store';
+import { UserState } from 'src/app/auth/store/user.store';
 import { BoardsService } from '../../boards.service';
 import { Card } from '../../model/card.model';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,20 +18,19 @@ import { ColumnState } from '../../store/columns.store';
 })
 export class TaskDetailsComponent {
 
+  private boardService: BoardsService = inject(BoardsService);
+  private columnState: ColumnState = inject(ColumnState);
+  private userState: UserState = inject(UserState);
+
   @Input() card?: Card;
   public showTitleInput: boolean;
   public showDescriptionInput: boolean;
-  public allUsers: Observable<User[]>;
   public titleFormControl: FormControl;
   public descriptionFormControl: FormControl;
-
-  private boardService: BoardsService = inject(BoardsService);
-  private columnState = inject(ColumnState)
 
   constructor() {
     this.showTitleInput = false;
     this.showDescriptionInput = false;
-    this.allUsers = $usersAll.asObservable();
     this.titleFormControl = new FormControl(this.card?.title, {
       validators: [Validators.required],
     });
@@ -145,5 +144,9 @@ export class TaskDetailsComponent {
 
   get columns() {
     return this.columnState.getColumns();
+  }
+
+  get allUsers(): User[] {
+    return this.userState.getUsers();
   }
 }

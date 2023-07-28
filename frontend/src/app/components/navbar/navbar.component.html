@@ -3,11 +3,11 @@
     <a class="navbar-item" routerLink="/boards">Kanbag</a>
   </div>
   <div class="navbar-end">
-    <div class="avatar avatar-ring avatar-md">
+    <div class="avatar avatar-ring avatar-md" *ngIf="user && user.email; else showAuthButtons">
       <div class="dropdown-container">
         <div class="dropdown">
           <label class="btn btn-ghost flex cursor-pointer px-0 hover:bg-inherit" tabindex="0">
-            {{userInitials}}
+            {{getUserInitials(user.displayName)}}
           </label>
           <div class="dropdown-menu">
             <a class="dropdown-item text-sm" (click)="logout()">Logout</a>

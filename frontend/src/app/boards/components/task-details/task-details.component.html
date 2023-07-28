@@ -67,7 +67,7 @@
                                     <mat-icon>add</mat-icon>
                                 </label>
                                 <div class="dropdown-menu dropdown-menu-bottom-right">
-                                    <a class="dropdown-item text-sm" *ngFor="let user of allUsers | async">
+                                    <a class="dropdown-item text-sm" *ngFor="let user of allUsers">
                                         {{!userIn(user)}}
                                         <div *ngIf="!userIn(user)" (click)="manageCardUsers(user)">
                                             <!-- <span class="tooltip tooltip-top" [attr.data-tooltip]="user.email"> -->

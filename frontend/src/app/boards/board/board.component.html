@@ -4,7 +4,7 @@
       <h2 class="text-2xl">{{ board.name }}</h2>
       <div class="flex">
         <div class="avatar-group !overflow-visible">
-          <div class="tooltip tooltip-left" [attr.data-tooltip]="user.email" *ngFor="let user of members | async">
+          <div class="tooltip tooltip-left" [attr.data-tooltip]="user.email" *ngFor="let user of members()">
             <div class="avatar">
               <span>{{ getUserInitials(user.displayName) }}</span>
             </div>
@@ -66,12 +66,12 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let user of allUsers | async">
+                <tr *ngFor="let user of allUsers">
                   <th>
                     <label>
                       <input type="checkbox" class="checkbox" [checked]="
-                        (members | async)!.length &&
-                        (members | async)!.indexOf(user)!
+                        members().length &&
+                        members().indexOf(user)!
                       " (change)="manageBoardUsers(user)" />
                     </label>
                   </th>
