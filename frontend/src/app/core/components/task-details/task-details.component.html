@@ -43,10 +43,17 @@
                     <label class="btn btn-solid-primary my-2" tabindex="0"
                         [ngClass]="{'btn-solid-success': card?.priority === 'LOW', 'btn-solid-warning': card?.priority === 'MEDIUM', 'btn-solid-error': card?.priority === 'HIGH'}">{{card?.priority}}</label>
                     <div class="dropdown-menu dropdown-menu-bottom-right shadow-sm">
-                        <a class="dropdown-item text-sm text-success" (click)="updateCardPriority('LOW')">LOW</a>
-                        <a tabindex="-1" class="dropdown-item text-sm text-warning"
+                        <a class="dropdown-item text-sm text-success"
+                            [ngClass]="{'dropdown-active': card?.priority === 'LOW'}"
+                            [attr.tabindex]="card?.priority === 'LOW' ? -1 : 'none'"
+                            (click)="updateCardPriority('LOW')">LOW</a>
+                        <a class="dropdown-item text-sm text-warning"
+                            [ngClass]="{'dropdown-active': card?.priority === 'MEDIUM'}"
+                            [attr.tabindex]="card?.priority === 'MEDIUM' ? -1 : 'none'"
                             (click)="updateCardPriority('MEDIUM')">MEDIUM</a>
-                        <a tabindex="-1" class="dropdown-item text-sm text-error"
+                        <a class="dropdown-item text-sm text-error"
+                            [ngClass]="{'dropdown-active': card?.priority === 'HIGH'}"
+                            [attr.tabindex]="card?.priority === 'HIGH' ? -1 : 'none'"
                             (click)="updateCardPriority('HIGH')">HIGH</a>
                     </div>
                 </div>
